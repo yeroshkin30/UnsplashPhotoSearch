@@ -28,6 +28,7 @@ class PhotoViewController: UIViewController {
         setupUI()
         update()
     }
+
     
     func update() {
         Task {

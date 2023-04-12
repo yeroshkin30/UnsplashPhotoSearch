@@ -10,7 +10,7 @@ import Kingfisher
 
 class PhotoView: UIView {
     private let likesView: LikesView = .init()
-    private let imageView: UIImageView = .init()
+    private let scrollView: PhotoScrollView = .init()
     private let infoButton: UIButton = .init()
 
     var configuration: Configuration? {
@@ -30,14 +30,13 @@ class PhotoView: UIView {
     }
 
     func setup() {
-        addSubview(imageView)
+        addSubview(scrollView)
         addSubview(likesView)
         addSubview(infoButton)
         backgroundColor = .black
 
-        imageView.frame = self.bounds
-        imageView.contentMode = .scaleAspectFit
-        imageView.kf.indicatorType = .activity
+        scrollView.frame = self.bounds
+        scrollView.imageView.kf.indicatorType = .activity
 
         infoButton.configuration = likesView.likesButton.configuration
         infoButton.configuration?.image = UIImage(systemName: "info.circle.fill")
@@ -52,12 +51,12 @@ class PhotoView: UIView {
     func setupConstraints() {
         likesView.translatesAutoresizingMaskIntoConstraints = false
         infoButton.translatesAutoresizingMaskIntoConstraints = false
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
             likesView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
             likesView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
@@ -94,9 +93,9 @@ private extension PhotoView {
 
         guard oldValue?.imageURL != configuration.imageURL else { return }
 
-        imageView.kf.setImage(
+        scrollView.imageView.kf.setImage(
             with: configuration.imageURL,
-            placeholder: imageView.image ?? configuration.placeholder,
+            placeholder: scrollView.imageView.image ?? configuration.placeholder,
             options: [.transition(.fade(0.2)),]
         )
     }
