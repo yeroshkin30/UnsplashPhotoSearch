@@ -36,7 +36,6 @@ class PhotoViewController: UIViewController {
 
             self.photo = try await PhotoDataRequest().fetchPhotoData(photoId: photo.id)
 
-            self.photoView.configuration = .init(photo: self.photo)
         }
     }
 
