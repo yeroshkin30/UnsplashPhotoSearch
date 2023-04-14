@@ -36,7 +36,7 @@ class UserViewController: UIViewController {
         
         fetchUserMediaTask = Task {
             do {
-                try await userController.fetchUserMedia(category: userMediaView.selectedMediaType(), links: user.links)
+//                try await userController.fetchUserMedia(category: userMediaView.selectedMediaType(), links: user.links)
                 userMediaView.collectionView.collectionViewLayout = userController.createLayout()
                 userMediaView.collectionView.reloadData()
                 

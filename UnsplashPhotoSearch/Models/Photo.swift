@@ -47,7 +47,6 @@ struct Photo: Codable {
     
 }
 
-
 struct PhotoURLS: Codable {
     let regular: URL
     let small: URL

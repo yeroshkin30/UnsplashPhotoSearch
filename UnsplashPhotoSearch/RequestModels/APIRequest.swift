@@ -42,27 +42,23 @@ extension URLRequest {
     }
 }
 
-protocol APIRequest {
-    associatedtype Response
+struct APIRequest<ItemType: Codable> {
 
-    func decodeResponse(data: Data) throws -> Response
-}
+    private func decodeResponse(data: Data) throws -> [ItemType] {
+        let searchResults = try JSONDecoder().decode(PhotoSearchResults<ItemType>.self, from: data)
+        return searchResults.results
+    }
 
-extension APIRequest where Response: Decodable {
-    func sendRequest(with urlRequest: URLRequest) async throws -> Response {
-//        let urlRequest = URLRequest.init(
-//            path: category,
-//            queryItems: Array.pageQueryItems(searchWord: searchWord, itemsPerPage: itemsPerPage, page: page)
-//        )
+    func sendRequest(with urlRequest: URLRequest) async throws -> [ItemType] {
+        
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkErrors.searchDataNotFound
         }
 
-        let photoData = try decodeResponse(data: data)
-
-        return photoData
+        let searchData = try decodeResponse(data: data)
+    return searchData
     }
 }
 

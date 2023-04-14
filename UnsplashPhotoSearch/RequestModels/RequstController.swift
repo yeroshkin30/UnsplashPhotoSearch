@@ -7,30 +7,6 @@
 
 import UIKit
 
-struct PhotosSearchRequest: APIRequest {
-    func decodeResponse(data: Data) throws -> [Photo] {
-        let photoSearchData = try JSONDecoder().decode(PhotoSearchResults.self, from: data)
-
-        return photoSearchData.results
-    }
-}
-
-
-
-
-struct CollectionsSearchRequest: APIRequest {
-    func decodeResponse(data: Data) throws -> [Collection] {
-        let collectionsSearchData = try JSONDecoder().decode(CollectionsSearchResults.self, from: data)
-        return collectionsSearchData.results
-    }
-}
-
-struct UsersSearchRequest: APIRequest {
-    func decodeResponse(data: Data) throws -> [User] {
-        let usersSearchData = try JSONDecoder().decode(UsersSearchResults.self, from: data)
-        return usersSearchData.results
-    }
-}
 
 
 struct PhotoDataRequest {
@@ -81,7 +57,7 @@ struct FetchPhotos {
 
 
 
-struct UserPhotosRequest: APIRequest {
+struct UserPhotosRequest {
     func decodeResponse(data: Data) throws -> [Photo] {
         let photos = try JSONDecoder().decode([Photo].self, from: data)
         

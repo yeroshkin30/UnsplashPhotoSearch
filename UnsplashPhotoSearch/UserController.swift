@@ -20,26 +20,26 @@ class UserController: NSObject, UICollectionViewDelegate, UICollectionViewDataSo
     
     private var mediaType = UserMediaType.photos
     
-    func fetchUserMedia(category: String, links: UserLinks) async throws {
-        print(category)
-        mediaType = UserMediaType(rawValue: category)!
-        
-        switch mediaType{
-        case .photos:
-            var urlRequest = URLRequest(url: links.photos)
-            urlRequest.setValue("Client-ID ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY", forHTTPHeaderField: "Authorization")
-
-            let photos = try await UserPhotosRequest().sendRequest(with: urlRequest)
-            userPhotos = photos
-            
-        case .likes:
-            let urlRequest = URLRequest(url: links.likes)
-            let photos = try await PhotosSearchRequest().sendRequest(with: urlRequest)
-            userLikedPhotos = photos
-        case .collections:
-            return
-        }
-    }
+//    func fetchUserMedia(category: String, links: UserLinks) async throws {
+//        print(category)
+//        mediaType = UserMediaType(rawValue: category)!
+//        
+//        switch mediaType{
+//        case .photos:
+//            var urlRequest = URLRequest(url: links.photos)
+//            urlRequest.setValue("Client-ID ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY", forHTTPHeaderField: "Authorization")
+//
+//            let photos = try await UserPhotosRequest().sendRequest(with: urlRequest)
+//            userPhotos = photos
+//            
+//        case .likes:
+//            let urlRequest = URLRequest(url: links.likes)
+//            let photos = try await PhotosSearchRequest().sendRequest(with: urlRequest)
+//            userLikedPhotos = photos
+//        case .collections:
+//            return
+//        }
+//    }
     
     
     

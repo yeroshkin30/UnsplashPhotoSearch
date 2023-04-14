@@ -8,8 +8,8 @@
 import Foundation
 
 
-struct PhotoSearchResults: Codable {
+struct PhotoSearchResults<ResultsType: Codable>: Codable {
     let total: Int
     let total_pages: Int
-    let results: [Photo]
+    let results: [ResultsType]
 }
