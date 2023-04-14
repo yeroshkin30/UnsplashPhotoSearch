@@ -43,14 +43,11 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
 
         switch chosenCategory {
         case .photos:
-            photosSearchController.searchWord = word
-            photosSearchViewController.fetchItems()
+            photosSearchViewController.searchWord = word
         case.collections:
-            collectionsSearchController.searchWord = word
-            collectionsSearchViewController.fetchItems()
+            collectionsSearchViewController.searchWord = word
         case.users:
-            usersSearchController.searchWord = word
-            usersSearchViewController.fetchItems()
+            usersSearchViewController.searchWord = word
         }
     }
 

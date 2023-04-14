@@ -8,20 +8,19 @@
 import UIKit
 
 class CollectionsSearchViewController: UIViewController  {
-
-    enum Event {
-        case photoSelected(Photo)
-        case itemsInserted([Int])
-    }
+    private let collectionView: SearchCollectionView = .init(frame: CGRect.zero,collectionViewLayout: UICollectionViewLayout())
 
     private let searchController: SearchController<Collection>
     var searchData: [Collection] = []
+
+    var searchWord: String = "" {
+        didSet {
+            if searchWord != oldValue {
+                fetchItems()
+            }
+        }
+    }
     var searchTask: Task<Void, Never>?
-
-    var onEvent: ((Event) -> Void)?
-
-    let collectionView: SearchCollectionView = .init(frame: CGRect.zero,collectionViewLayout: UICollectionViewLayout())
-
 
     init (controller: SearchController<Collection>) {
         self.searchController = controller
@@ -42,8 +41,8 @@ class CollectionsSearchViewController: UIViewController  {
         searchTask?.cancel()
         searchTask = Task {
             do {
+                searchController.searchWord = searchWord
                 self.searchData = try await searchController.loadNextPage()
-                print(searchData.count)
             } catch {
                 print(error)
             }
@@ -87,11 +86,42 @@ extension CollectionsSearchViewController: UICollectionViewDataSource, UICollect
         let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: "header", withReuseIdentifier: "header",
             for: indexPath) as! CollectionsHeaderView
-        print(indexPath)
         let item = searchData[indexPath.section]
         header.nameLabel.text = item.title
         header.photoCountLabel.text = "\(item.totalPhotos) photos"
 
         return header
+    }
+
+    //DELEGATE
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photosURL = searchData[indexPath.item].photosURL
+        let collectionVC = CollectionViewController(url: photosURL)
+        show(collectionVC, sender: nil)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        if indexPath.item != 0 { return }
+        var itemsLeft = searchData.count - indexPath.section
+
+        if itemsLeft == 25 {
+
+            let startIndex = searchData.count
+            let itemRange = Array(startIndex...startIndex + 29)
+
+            Task {
+                do {
+                    let searchData = try await searchController.loadNextPage()
+                    self.searchData.append(contentsOf: searchData)
+                    collectionView.insertSections(IndexSet(itemRange))
+                } catch {
+                    print(error)
+                }
+            }
+        }
     }
 }

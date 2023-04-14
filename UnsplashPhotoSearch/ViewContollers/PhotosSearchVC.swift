@@ -11,6 +11,15 @@ class PhotosSearchViewController: UIViewController  {
 
     private let searchController: SearchController<Photo>
     var searchData: [Photo] = []
+
+    var searchWord: String = "" {
+        didSet {
+            if searchWord != oldValue {
+                fetchItems()
+            }
+        }
+    }
+
     private var searchTask: Task<Void, Never>?
 
     let collectionView: SearchCollectionView = .init(
@@ -38,6 +47,7 @@ class PhotosSearchViewController: UIViewController  {
         searchTask?.cancel()
         searchTask = Task {
             do {
+                searchController.searchWord = searchWord
                 self.searchData = try await searchController.loadNextPage()
             } catch {
                 print(error)
@@ -65,45 +75,44 @@ extension PhotosSearchViewController: UICollectionViewDataSource, UICollectionVi
 
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-print(indexPath)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
         let item = searchData[indexPath.item]
         cell.configure(with: item)
+
         return cell
     }
 
 
     //DELEGATE
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//
-//        let photo = photoSearchData[indexPath.item]
-//        onEvent?(.photoSelected(photo))
-//    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photo = searchData[indexPath.item]
+        let photoViewController = PhotoViewController(photo: photo)
+        show(photoViewController, sender: nil)
+    }
 
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        let itemsLeft = searchData.count - indexPath.item
+        if itemsLeft == 25 {
 
-//    func collectionView(
-//        _ collectionView: UICollectionView,
-//        willDisplay cell: UICollectionViewCell,
-//        forItemAt indexPath: IndexPath
-//    ) {
-//        var startIndex = photoSearchData.count
-//        var lefted = photoSearchData.count - indexPath.item
-//
-//        let itemRange = Array(startIndex...startIndex + 29)
-//
-//        if lefted == 25 {
-//
-//            Task {
-//                do {
-//                    //                    try await loadNextPage()
-//
-//                    self.onEvent?(.itemsInserted(itemRange))
-//                } catch {
-//                    print(error)
-//                }
-//            }
-//        }
-//    }
+            let startIndex = searchData.count
+            let itemRange = Array(startIndex...startIndex + 29)
+            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+
+            Task {
+                do {
+                    let searchData = try await searchController.loadNextPage()
+                    self.searchData.append(contentsOf: searchData)
+                } catch {
+                    print(error)
+                }
+                collectionView.insertItems(at: insertedIndexRange)
+            }
+        }
+    }
 }
 
 

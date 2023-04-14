@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionPhotosViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class CollectionViewController: UIViewController{
     var collectionView: UICollectionView = .init(frame: CGRect(), collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout)
     let photoUrl: URL
     var photosData: [Photo] = []
@@ -15,8 +15,8 @@ class CollectionPhotosViewController: UIViewController, UICollectionViewDataSour
 
     var photoRequestTask: Task<Void, Never>?
 
-    init (photoUrl: URL) {
-        self.photoUrl = photoUrl
+    init (url: URL) {
+        self.photoUrl = url
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -50,6 +50,9 @@ class CollectionPhotosViewController: UIViewController, UICollectionViewDataSour
             photoRequestTask?.cancel()
         }
     }
+}
+
+extension CollectionViewController: UICollectionViewDataSource, UICollectionViewDelegate  {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
