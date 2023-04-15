@@ -8,7 +8,7 @@
 import UIKit
 
 
-class UsersSearchViewController: UIViewController  {
+class UsersSearchVC: UIViewController  {
     let collectionView: SearchCollectionView = .init(
         frame: CGRect.zero,
         collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout
@@ -66,7 +66,7 @@ class UsersSearchViewController: UIViewController  {
 
 }
 
-extension UsersSearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension UsersSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return searchData.count
     }
@@ -82,7 +82,7 @@ extension UsersSearchViewController: UICollectionViewDataSource, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let user = searchData[indexPath.item]
-        let userVC = UserViewController(user: user)
+        let userVC = UserVC(user: user)
         show(userVC, sender: nil)
     }
 

@@ -1,5 +1,5 @@
 //
-//  CollectionsSearchViewController.swift
+//  CollectionsSearchVC.swift
 //  UnsplashPhotoSearch
 //
 //  Created by Oleg  on 13.04.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionsSearchViewController: UIViewController  {
+class CollectionsSearchVC: UIViewController  {
     private let collectionView: SearchCollectionView = .init(frame: CGRect.zero,collectionViewLayout: UICollectionViewLayout())
 
     private let dataRequestController: DataRequestController<Collection>
@@ -64,7 +64,7 @@ class CollectionsSearchViewController: UIViewController  {
 
 }
 
-extension CollectionsSearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         searchData.count
     }
@@ -96,7 +96,7 @@ extension CollectionsSearchViewController: UICollectionViewDataSource, UICollect
     //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photosURL = searchData[indexPath.item].photosURL
-        let collectionVC = CollectionViewController(url: photosURL)
+        let collectionVC = CollectionVC(url: photosURL)
         show(collectionVC, sender: nil)
     }
 

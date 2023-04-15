@@ -9,7 +9,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class PhotoDetailViewController: UIViewController {
+class PhotoDetailVC: UIViewController {
     let photoDetailView = PhotoDetailView()
     let location: Location
     
@@ -28,7 +28,7 @@ class PhotoDetailViewController: UIViewController {
     }
 }
 
-private extension PhotoDetailViewController {
+private extension PhotoDetailVC {
 
     @objc func doneButtonPressed() {
         dismiss(animated: true)

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PhotosSearchViewController: UIViewController  {
+class PhotosSearchVC: UIViewController  {
 
     private let dataRequestController: DataRequestController<Photo>
     var searchData: [Photo] = []
@@ -68,7 +68,7 @@ class PhotosSearchViewController: UIViewController  {
 
 }
 
-extension PhotosSearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PhotosSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return searchData.count
     }
@@ -86,7 +86,7 @@ extension PhotosSearchViewController: UICollectionViewDataSource, UICollectionVi
     //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = searchData[indexPath.item]
-        let photoViewController = PhotoViewController(photo: photo)
+        let photoViewController = PhotoVC(photo: photo)
         show(photoViewController, sender: nil)
     }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionViewController: UIViewController{
+class CollectionVC: UIViewController{
     var collectionView: UICollectionView = .init(frame: CGRect(), collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout)
     let photoUrl: URL
     var photosData: [Photo] = []
@@ -52,7 +52,7 @@ class CollectionViewController: UIViewController{
     }
 }
 
-extension CollectionViewController: UICollectionViewDataSource, UICollectionViewDelegate  {
+extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate  {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -71,7 +71,7 @@ extension CollectionViewController: UICollectionViewDataSource, UICollectionView
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = photosData[indexPath.item]
-        let photoDetailVC = PhotoViewController(photo: photo)
+        let photoDetailVC = PhotoVC(photo: photo)
         
         self.show(photoDetailVC, sender: nil)
     }

@@ -10,16 +10,16 @@ import UIKit
 import Kingfisher
 
 
-class SearchViewController: UIViewController, UISearchBarDelegate {
+class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
 
     private let photosSearchController = DataRequestController<Photo>(category: "photos")
     private let collectionsSearchController = DataRequestController<Collection>(category: "collections")
     private let usersSearchController = DataRequestController<User>(category: "users")
 
-    lazy private var photosSearchViewController: PhotosSearchViewController = .init(controller: photosSearchController )
-    lazy private var collectionsSearchViewController: CollectionsSearchViewController = .init(controller: collectionsSearchController)
-    lazy private var usersSearchViewController: UsersSearchViewController = .init(controller: usersSearchController)
+    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosSearchController )
+    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsSearchController)
+    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersSearchController)
 
     enum Category: Int {
         case photos
@@ -39,9 +39,9 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
     @objc func setupSearchWord() {
         let word = "panda"
 
-        photosSearchViewController.searchWord = word
-        collectionsSearchViewController.searchWord = word
-        usersSearchViewController.searchWord = word
+        photosSearchVC.searchWord = word
+        collectionsSearchVC.searchWord = word
+        usersSearchVC.searchWord = word
 
     }
 
@@ -62,24 +62,24 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
         chosenCategory = Category(rawValue: index)!
         switch chosenCategory {
         case .photos:
-            hideViewController(photosSearchViewController)
+            hideViewController(photosSearchVC)
         case .collections:
-            hideViewController(collectionsSearchViewController)
+            hideViewController(collectionsSearchVC)
         case .users:
-            hideViewController(usersSearchViewController)
+            hideViewController(usersSearchVC)
         }
     }
 
     func hideViewController(_ vc: UIViewController) {
-        photosSearchViewController.view.isHidden = true
-        collectionsSearchViewController.view.isHidden = true
-        usersSearchViewController.view.isHidden = true
+        photosSearchVC.view.isHidden = true
+        collectionsSearchVC.view.isHidden = true
+        usersSearchVC.view.isHidden = true
         vc.view.isHidden = false
     }
 }
 
 //UISetup
-private extension SearchViewController {
+private extension SearchVC {
     func setup() {
         view.backgroundColor = .white
 
@@ -105,28 +105,28 @@ private extension SearchViewController {
     }
 
     func setupChildVC() {
-        addChild(photosSearchViewController)
-        addChild(collectionsSearchViewController)
-        addChild(usersSearchViewController)
+        addChild(photosSearchVC)
+        addChild(collectionsSearchVC)
+        addChild(usersSearchVC)
 
-        view.addSubview(photosSearchViewController.view)
-        view.addSubview(collectionsSearchViewController.view)
-        view.addSubview(usersSearchViewController.view)
+        view.addSubview(photosSearchVC.view)
+        view.addSubview(collectionsSearchVC.view)
+        view.addSubview(usersSearchVC.view)
 
-        photosSearchViewController.didMove(toParent: self)
-        collectionsSearchViewController.didMove(toParent: self)
-        usersSearchViewController.didMove(toParent: self)
+        photosSearchVC.didMove(toParent: self)
+        collectionsSearchVC.didMove(toParent: self)
+        usersSearchVC.didMove(toParent: self)
 
-        collectionsSearchViewController.view.isHidden = true
-        usersSearchViewController.view.isHidden = true
+        collectionsSearchVC.view.isHidden = true
+        usersSearchVC.view.isHidden = true
     }
     
     func setupConstraints() {
-        photosSearchViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        collectionsSearchViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        usersSearchViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        photosSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
+        collectionsSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
+        usersSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
 
-        [photosSearchViewController, usersSearchViewController, collectionsSearchViewController].forEach {
+        [photosSearchVC, usersSearchVC, collectionsSearchVC].forEach {
             NSLayoutConstraint.activate([
                 $0.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 $0.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),

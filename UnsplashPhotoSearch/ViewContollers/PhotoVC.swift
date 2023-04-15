@@ -8,7 +8,7 @@
 import UIKit
 
 
-class PhotoViewController: UIViewController {
+class PhotoVC: UIViewController {
     private lazy var photoView: PhotoView = .init()
 
     var photo: Photo
@@ -44,15 +44,15 @@ class PhotoViewController: UIViewController {
     }
 }
 
-private extension PhotoViewController {
+private extension PhotoVC {
 
     func setupUI() {
         view.addSubview(photoView)
         title = photo.user?.username
 
         photoView.infoButtonEvent = {
-            let detailVc = PhotoDetailViewController(location: self.photo.location!)
-            self.present(UINavigationController(rootViewController: detailVc), animated: true)
+            let detailVC = PhotoDetailVC(location: self.photo.location!)
+            self.present(UINavigationController(rootViewController: detailVC), animated: true)
         }
 
     }

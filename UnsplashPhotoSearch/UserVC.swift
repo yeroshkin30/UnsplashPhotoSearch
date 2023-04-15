@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-class UserViewController: UIViewController {
+class UserVC: UIViewController {
     let userInfoView = UserDetailInfoView()
     let userMediaView = UserMediaView()
     let image: UIImageView = .init()
@@ -47,7 +47,7 @@ class UserViewController: UIViewController {
     }
 }
 
-private extension UserViewController {
+private extension UserVC {
     func setup() {
         view.backgroundColor = .white
         view.addSubview(userInfoView)
