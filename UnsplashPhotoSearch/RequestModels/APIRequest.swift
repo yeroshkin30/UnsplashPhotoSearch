@@ -58,7 +58,8 @@ struct APIRequest<ItemType: Codable> {
         }
 
         let searchData = try decodeResponse(data: data)
-    return searchData
+
+        return searchData
     }
 }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SearchController<SearchItem: Codable> {
+class DataRequestController<SearchItem: Codable> {
     
     private var searchItems: [SearchItem] = []
     private var currentPage: Int = 0

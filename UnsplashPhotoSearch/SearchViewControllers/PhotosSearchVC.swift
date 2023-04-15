@@ -1,21 +1,16 @@
 //
-//  UsersSeachVC.swift
+//  PhotosSearchVC.swift
 //  UnsplashPhotoSearch
 //
-//  Created by Oleg  on 14.04.2023.
+//  Created by Oleg  on 13.04.2023.
 //
 
 import UIKit
 
+class PhotosSearchViewController: UIViewController  {
 
-class UsersSearchViewController: UIViewController  {
-    let collectionView: SearchCollectionView = .init(
-        frame: CGRect.zero,
-        collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout
-    )
-    private let searchController: SearchController<User>
-    var searchData: [User] = []
-    private var searchTask: Task<Void, Never>?
+    private let dataRequestController: DataRequestController<Photo>
+    var searchData: [Photo] = []
 
     var searchWord: String = "" {
         didSet {
@@ -25,8 +20,16 @@ class UsersSearchViewController: UIViewController  {
         }
     }
 
-    init (controller: SearchController<User>) {
-        self.searchController = controller
+    private var searchTask: Task<Void, Never>?
+
+    let collectionView: SearchCollectionView = .init(
+        frame: CGRect.zero,
+        collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout
+    )
+
+
+    init (controller: DataRequestController<Photo>) {
+        self.dataRequestController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -44,12 +47,11 @@ class UsersSearchViewController: UIViewController  {
         searchTask?.cancel()
         searchTask = Task {
             do {
-                searchController.searchWord = searchWord
-                self.searchData = try await searchController.loadNextPage()
+                dataRequestController.searchWord = searchWord
+                self.searchData = try await dataRequestController.loadNextPage()
             } catch {
                 print(error)
             }
-
             collectionView.reloadData()
             searchTask?.cancel()
         }
@@ -60,30 +62,32 @@ class UsersSearchViewController: UIViewController  {
         collectionView.frame = view.bounds
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.usersSearchLayout
+        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.photoSearchLayout
         collectionView.frame = view.bounds
     }
 
 }
 
-extension UsersSearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PhotosSearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return searchData.count
     }
 
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserInfoCell.identifier, for: indexPath) as! UserInfoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
         let item = searchData[indexPath.item]
         cell.configure(with: item)
+
         return cell
     }
 
+
+    //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let user = searchData[indexPath.item]
-        let userVC = UserViewController(user: user)
-        show(userVC, sender: nil)
+        let photo = searchData[indexPath.item]
+        let photoViewController = PhotoViewController(photo: photo)
+        show(photoViewController, sender: nil)
     }
 
     func collectionView(
@@ -100,7 +104,7 @@ extension UsersSearchViewController: UICollectionViewDataSource, UICollectionVie
 
             Task {
                 do {
-                    let searchData = try await searchController.loadNextPage()
+                    let searchData = try await dataRequestController.loadNextPage()
                     self.searchData.append(contentsOf: searchData)
                 } catch {
                     print(error)
@@ -110,3 +114,5 @@ extension UsersSearchViewController: UICollectionViewDataSource, UICollectionVie
         }
     }
 }
+
+

@@ -30,7 +30,6 @@ class PhotoScrollView: UIScrollView, UIScrollViewDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("content size: \(contentSize)")
 
     }
     private func setup() {
@@ -48,10 +47,9 @@ class PhotoScrollView: UIScrollView, UIScrollViewDelegate {
         let widthScale = size.width / imageView.bounds.width
         let heightScale = size.height / imageView.bounds.height
         let minScale = min(widthScale, heightScale)
-        print(imageView.frame)
-        print("min zoom: \(minScale)")
+
         minimumZoomScale = minScale
         zoomScale = minScale
-        print("content size: \(contentSize)")
+
     }
 }

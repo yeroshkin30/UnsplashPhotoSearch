@@ -10,7 +10,7 @@ import UIKit
 class CollectionsSearchViewController: UIViewController  {
     private let collectionView: SearchCollectionView = .init(frame: CGRect.zero,collectionViewLayout: UICollectionViewLayout())
 
-    private let searchController: SearchController<Collection>
+    private let dataRequestController: DataRequestController<Collection>
     var searchData: [Collection] = []
 
     var searchWord: String = "" {
@@ -22,8 +22,8 @@ class CollectionsSearchViewController: UIViewController  {
     }
     var searchTask: Task<Void, Never>?
 
-    init (controller: SearchController<Collection>) {
-        self.searchController = controller
+    init (controller: DataRequestController<Collection>) {
+        self.dataRequestController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -41,8 +41,8 @@ class CollectionsSearchViewController: UIViewController  {
         searchTask?.cancel()
         searchTask = Task {
             do {
-                searchController.searchWord = searchWord
-                self.searchData = try await searchController.loadNextPage()
+                dataRequestController.searchWord = searchWord
+                self.searchData = try await dataRequestController.loadNextPage()
             } catch {
                 print(error)
             }
@@ -106,7 +106,7 @@ extension CollectionsSearchViewController: UICollectionViewDataSource, UICollect
         forItemAt indexPath: IndexPath
     ) {
         if indexPath.item != 0 { return }
-        var itemsLeft = searchData.count - indexPath.section
+        let itemsLeft = searchData.count - indexPath.section
 
         if itemsLeft == 25 {
 
@@ -115,7 +115,7 @@ extension CollectionsSearchViewController: UICollectionViewDataSource, UICollect
 
             Task {
                 do {
-                    let searchData = try await searchController.loadNextPage()
+                    let searchData = try await dataRequestController.loadNextPage()
                     self.searchData.append(contentsOf: searchData)
                     collectionView.insertSections(IndexSet(itemRange))
                 } catch {

@@ -13,17 +13,15 @@ import Kingfisher
 class SearchViewController: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
 
-    private let photosSearchController = SearchController<Photo>(category: Category.photos.rawValue)
-    private let collectionsSearchController = SearchController<Collection>(category: Category.collections.rawValue)
-    private let usersSearchController = SearchController<User>(category: Category.users.rawValue)
+    private let photosSearchController = DataRequestController<Photo>(category: "photos")
+    private let collectionsSearchController = DataRequestController<Collection>(category: "collections")
+    private let usersSearchController = DataRequestController<User>(category: "users")
 
     lazy private var photosSearchViewController: PhotosSearchViewController = .init(controller: photosSearchController )
     lazy private var collectionsSearchViewController: CollectionsSearchViewController = .init(controller: collectionsSearchController)
     lazy private var usersSearchViewController: UsersSearchViewController = .init(controller: usersSearchController)
 
-    private let searchCategory = ["photos", "collections", "users"]
-    
-    enum Category: String {
+    enum Category: Int {
         case photos
         case collections
         case users
@@ -34,39 +32,34 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        fetchMatchingItems()
+        setupSearchWord()
     }
 
 
-    @objc func fetchMatchingItems() {
+    @objc func setupSearchWord() {
         let word = "panda"
 
-        switch chosenCategory {
-        case .photos:
-            photosSearchViewController.searchWord = word
-        case.collections:
-            collectionsSearchViewController.searchWord = word
-        case.users:
-            usersSearchViewController.searchWord = word
-        }
+        photosSearchViewController.searchWord = word
+        collectionsSearchViewController.searchWord = word
+        usersSearchViewController.searchWord = word
+
     }
 
     // searchControllerDelegate
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        perform(#selector(fetchMatchingItems), with: nil)
+        perform(#selector(setupSearchWord), with: nil)
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         searchCategoryChanged()
 
-        fetchMatchingItems()
+        setupSearchWord()
     }
 
 
     func searchCategoryChanged() {
         let index = searchController.searchBar.selectedScopeButtonIndex
-        let word = searchController.searchBar.scopeButtonTitles![index].lowercased()
-        chosenCategory = Category(rawValue: word)!
+        chosenCategory = Category(rawValue: index)!
         switch chosenCategory {
         case .photos:
             hideViewController(photosSearchViewController)
@@ -87,9 +80,6 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
 
 //UISetup
 private extension SearchViewController {
-
-
-
     func setup() {
         view.backgroundColor = .white
 
@@ -102,7 +92,7 @@ private extension SearchViewController {
         searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
         searchController.searchBar.searchTextField.addAction(
             UIAction { _ in
-                self.fetchMatchingItems()
+                self.setupSearchWord()
 
 
             },
@@ -113,7 +103,6 @@ private extension SearchViewController {
         setupChildVC()
         setupConstraints()
     }
-
 
     func setupChildVC() {
         addChild(photosSearchViewController)
@@ -128,10 +117,8 @@ private extension SearchViewController {
         collectionsSearchViewController.didMove(toParent: self)
         usersSearchViewController.didMove(toParent: self)
 
-        photosSearchViewController.view.isHidden = false
         collectionsSearchViewController.view.isHidden = true
         usersSearchViewController.view.isHidden = true
-
     }
     
     func setupConstraints() {
