@@ -8,62 +8,17 @@
 import UIKit
 
 
-class UsersSearchVC: UIViewController  {
-    let collectionView: SearchCollectionView = .init(
-        frame: CGRect.zero,
-        collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout
-    )
-    private let dataRequestController: DataRequestController<User>
-    var searchData: [User] = []
-    var searchWord: String = "" {
-        didSet {
-            if searchWord != oldValue {
-                fetchItems()
-            }
-        }
-    }
-    private var searchTask: Task<Void, Never>?
-
-
-    init (controller: DataRequestController<User>) {
-        self.dataRequestController = controller
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
+class UsersSearchVC: BaseSearchVC<User>  {
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setup()
+        setupCollectionView()
     }
 
-    func fetchItems() {
-        searchTask?.cancel()
-        searchTask = Task {
-            do {
-                dataRequestController.searchWord = searchWord
-                self.searchData = try await dataRequestController.loadNextPage()
-            } catch {
-                print(error)
-            }
-
-            collectionView.reloadData()
-            searchTask?.cancel()
-        }
-    }
-
-    func setup() {
-        view.addSubview(collectionView)
-        collectionView.frame = view.bounds
+    func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.usersSearchLayout
-        collectionView.frame = view.bounds
     }
-
 }
 
 extension UsersSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -93,20 +48,23 @@ extension UsersSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
     ) {
         let itemsLeft = searchData.count - indexPath.item
         if itemsLeft == 25 {
+            fetchNextPage()
+        }
+    }
 
-            let startIndex = searchData.count
-            let itemRange = Array(startIndex...startIndex + 29)
-            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+    func fetchNextPage() {
+        let startIndex = searchData.count
+        let itemRange = Array(startIndex...startIndex + 29)
+        let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
 
-            Task {
-                do {
-                    let searchData = try await dataRequestController.loadNextPage()
-                    self.searchData.append(contentsOf: searchData)
-                } catch {
-                    print(error)
-                }
-                collectionView.insertItems(at: insertedIndexRange)
+        Task {
+            do {
+                let searchData = try await dataRequestController.loadNextPage()
+                self.searchData.append(contentsOf: searchData)
+            } catch {
+                print(error)
             }
+            collectionView.insertItems(at: insertedIndexRange)
         }
     }
 }

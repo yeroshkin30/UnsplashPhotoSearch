@@ -39,10 +39,9 @@ class SearchVC: UIViewController, UISearchBarDelegate {
     @objc func setupSearchWord() {
         let word = "panda"
 
-        photosSearchVC.searchWord = word
-        collectionsSearchVC.searchWord = word
-        usersSearchVC.searchWord = word
-
+        photosSearchVC.searchWordDidChange(word)
+        collectionsSearchVC.searchWordDidChange(word)
+        usersSearchVC.searchWordDidChange(word)
     }
 
     // searchControllerDelegate

@@ -1,17 +1,11 @@
 //
-//  APIRequest.swift
+//  URLRequest extension.swift
 //  UnsplashPhotoSearch
 //
-//  Created by Apple on 01.02.2023.
+//  Created by Oleg  on 16.04.2023.
 //
 
-import UIKit
-
-
-enum NetworkErrors: Error {
-    case searchDataNotFound
-    case photoDataNotFound
-}
+import Foundation
 
 extension Array where Element == URLQueryItem {
     static func pageQueryItems(searchWord: String, page: Int) -> [URLQueryItem] {
@@ -31,7 +25,7 @@ extension URLRequest {
 
         components.path = "/search/\(path)"
         components.queryItems = queryItems
-        
+
 
         let baseURL = URL(string: components.string!)!
 
@@ -41,25 +35,3 @@ extension URLRequest {
         self = urlRequest
     }
 }
-
-struct APIRequest<ItemType: Codable> {
-
-    private func decodeResponse(data: Data) throws -> [ItemType] {
-        let searchResults = try JSONDecoder().decode(PhotoSearchResults<ItemType>.self, from: data)
-        return searchResults.results
-    }
-
-    func sendRequest(with urlRequest: URLRequest) async throws -> [ItemType] {
-        
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NetworkErrors.searchDataNotFound
-        }
-
-        let searchData = try decodeResponse(data: data)
-
-        return searchData
-    }
-}
-

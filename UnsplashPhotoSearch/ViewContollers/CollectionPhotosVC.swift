@@ -32,13 +32,13 @@ class CollectionVC: UIViewController{
         collectionView.delegate = self
         collectionView.register(ImageInfoCell.self, forCellWithReuseIdentifier: ImageInfoCell.identifier)
 
-        fetchPhotos()
+        fetchFirstPage()
     }
 
     override func viewDidLayoutSubviews() {
         collectionView.frame = view.bounds
     }
-    func fetchPhotos() {
+    func fetchFirstPage() {
         photoRequestTask = Task {
             do {
                 let photosData = try await FetchPhotos().fetchPhotos(with: photoUrl, page: pageNumber)
@@ -52,11 +52,7 @@ class CollectionVC: UIViewController{
     }
 }
 
-extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate  {
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
+extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photosData.count
@@ -69,6 +65,8 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate  {
         return cell
 
     }
+
+    //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = photosData[indexPath.item]
         let photoDetailVC = PhotoVC(photo: photo)
@@ -82,7 +80,7 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate  {
 
         if lefted == 25 {
             pageNumber += 1
-            fetchPhotos()
+            fetchFirstPage()
         }
     }
 }

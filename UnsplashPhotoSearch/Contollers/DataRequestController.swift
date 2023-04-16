@@ -33,7 +33,7 @@ class DataRequestController<SearchItem: Codable> {
         currentPage += 1
         let urlRequest = request(currentPage: currentPage)
 
-        let searchItems = try await APIRequest<SearchItem>().sendRequest(with: urlRequest)
+        let searchItems = try await SearchRequest<SearchItem>().sendRequest(with: urlRequest)
         self.searchItems = searchItems
 
         return searchItems
