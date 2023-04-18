@@ -24,23 +24,14 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsDataRequestController)
     lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersDataRequestController)
 
-    enum Category: Int {
-        case photos
-        case collections
-        case users
-    }
-
-    var chosenCategory = Category.photos
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        setupSearchWord()
+        changeSearchWord()
     }
 
-
-    @objc func setupSearchWord() {
-        let word = "panda"
+    func changeSearchWord() {
+        let word = "ocean"
 
         photosSearchVC.searchWordDidChange(word)
         collectionsSearchVC.searchWordDidChange(word)
@@ -49,11 +40,11 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
 
     // searchControllerDelegate
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        perform(#selector(setupSearchWord), with: nil)
+        changeSearchWord()
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        setupSearchWord()
+        changeSearchWord()
         let width = view.frame.width
         switch selectedScope {
         case 0:
@@ -62,7 +53,6 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
             pagingScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: true)
         case 2:
             pagingScrollView.setContentOffset(CGPoint(x: width * 2, y: 0), animated: true)
-
         default:
             return
         }
@@ -90,11 +80,7 @@ private extension SearchVC {
 
         searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
         searchController.searchBar.searchTextField.addAction(
-            UIAction { _ in
-                self.setupSearchWord()
-
-
-            },
+            UIAction { _ in self.changeSearchWord() },
             for: .valueChanged
         )
         searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)

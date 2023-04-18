@@ -9,10 +9,9 @@ import UIKit
 import Kingfisher
 
 class UserVC: UIViewController {
-    let userInfoView = UserDetailInfoView()
+    let userInfoView = UserInfoView()
     let userMediaView = UserMediaView()
-    let image: UIImageView = .init()
-    
+
     let userController = UserController()
     let user: User
     var fetchUserMediaTask: Task<Void, Never>?
@@ -56,9 +55,11 @@ private extension UserVC {
         userMediaView.collectionView.dataSource = userController
         userMediaView.collectionView.delegate = userController
 
-        userInfoView.profileImage.kf.setImage(with: user.profileImage)
-        userInfoView.usernameLabel.text = "@\(user.username)"
-        userInfoView.firstNameLabel.text = user.name
+        userInfoView.configuration = .init(
+            name: user.name,
+            username: user.username,
+            imageURL: user.imageURL
+        )
 
         setupConstraints()
     }

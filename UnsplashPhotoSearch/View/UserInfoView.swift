@@ -7,13 +7,19 @@
 
 import UIKit
 
-class UserDetailInfoView: UIView {
-    let usernameLabel: UILabel = .init()
-    let firstNameLabel: UILabel = .init()
-    let lastNameLabel: UILabel = .init()
-    let profileImage: UIImageView = .init()
+class UserInfoView: UIView {
+    private let usernameLabel: UILabel = .init()
+    private let nameLabel: UILabel = .init()
+    private let profileImage: UIImageView = .init()
+
     private let userDataStackView: UIStackView = .init()
     private let labelStackView: UIStackView = .init()
+
+    var configuration: Configuration? {
+        didSet {
+            configurationDidChange()
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,18 +37,23 @@ class UserDetailInfoView: UIView {
         setupLabels()
         setupStackViews()
         setupConstraints()
+    }
 
+    private func configurationDidChange() {
+        guard let configuration else { return }
+        
+        usernameLabel.text = configuration.username
+        nameLabel.text = configuration.name
+        profileImage.kf.setImage(with: configuration.imageURL)
     }
 
     private func setupLabels() {
         usernameLabel.font = UIFont.systemFont(ofSize: 14)
-        firstNameLabel.font = UIFont.systemFont(ofSize: 20)
-        lastNameLabel.font = UIFont.systemFont(ofSize: 20)
+        nameLabel.font = UIFont.systemFont(ofSize: 20)
     }
 
     private func setupStackViews() {
-        labelStackView.addArrangedSubview(firstNameLabel)
-        labelStackView.addArrangedSubview(lastNameLabel)
+        labelStackView.addArrangedSubview(nameLabel)
         labelStackView.addArrangedSubview(usernameLabel)
         labelStackView.axis = .vertical
         labelStackView.alignment = .leading
@@ -66,5 +77,13 @@ class UserDetailInfoView: UIView {
             userDataStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             userDataStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+}
+
+extension UserInfoView {
+    struct Configuration {
+        let name: String
+        let username: String
+        let imageURL: URL
     }
 }

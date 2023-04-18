@@ -98,7 +98,7 @@ class UserInfoCell: UICollectionViewCell {
         let processor = RoundCornerImageProcessor(cornerRadius: imageView.bounds.height / 2)
 
         imageView.kf.setImage(
-            with: userData.profileImage,
+            with: userData.imageURL,
             placeholder: UIImage(systemName: "photo"),
             options: [.transition(.fade(0.3)), .processor(processor)]
         )

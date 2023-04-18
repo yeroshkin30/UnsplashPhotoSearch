@@ -7,16 +7,16 @@
 
 import UIKit
 
-class CollectionVC: UIViewController{
+class CollectionVC: UIViewController {
     var collectionView: UICollectionView = .init(frame: CGRect(), collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout)
-    let photoUrl: URL
+    let collection: Collection
     var photosData: [Photo] = []
     var pageNumber = 1
 
     var photoRequestTask: Task<Void, Never>?
 
-    init (url: URL) {
-        self.photoUrl = url
+    init (_ collection: Collection) {
+        self.collection = collection
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -26,29 +26,30 @@ class CollectionVC: UIViewController{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        view.addSubview(collectionView)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(ImageInfoCell.self, forCellWithReuseIdentifier: ImageInfoCell.identifier)
+        setup()
 
         fetchFirstPage()
-    }
-
-    override func viewDidLayoutSubviews() {
-        collectionView.frame = view.bounds
     }
 
     func fetchFirstPage() {
         photoRequestTask = Task {
             do {
-                self.photosData = try await FetchPhotos<Photo>().fetchPhotos(with: photoUrl, page: pageNumber)
+                self.photosData = try await FetchPhotos<Photo>().fetchPhotos(with: collection.photosURL, page: pageNumber)
             } catch {
                 print(error)
             }
             collectionView.reloadData()
             photoRequestTask?.cancel()
         }
+    }
+
+    private func setup() {
+        view.backgroundColor = .white
+        view.addSubview(collectionView)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(ImageInfoCell.self, forCellWithReuseIdentifier: ImageInfoCell.identifier)
+        collectionView.frame = view.bounds
     }
 }
 
@@ -62,8 +63,8 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
         let item = photosData[indexPath.item]
         cell.configure(with: item)
-        return cell
 
+        return cell
     }
 
     //DELEGATE
@@ -75,28 +76,29 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let lefted = photosData.count - indexPath.item
+        let itemsLeft = photosData.count - indexPath.item
 
-        if lefted == 25 {
+        if itemsLeft == 25 {
             pageNumber += 1
             fetchNextPage()
         }
     }
 
     func fetchNextPage() {
+        guard collection.totalPhotos > photosData.count else { return }
+
         let startIndex = photosData.count
+
         Task {
             do {
-                let photosData = try await FetchPhotos<Photo>().fetchPhotos(with: photoUrl, page: pageNumber)
+                let photosData = try await FetchPhotos<Photo>().fetchPhotos(with: collection.photosURL, page: pageNumber)
                 self.photosData.append(contentsOf: photosData)
             } catch {
                 print(error)
             }
-            if startIndex < photosData.count {
-                let itemRange = Array(startIndex...photosData.count - 1)
-                let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
-                collectionView.insertItems(at: insertedIndexRange)
-            }
+            let itemRange = Array(startIndex...photosData.count - 1)
+            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+            collectionView.insertItems(at: insertedIndexRange)
         }
     }
 }

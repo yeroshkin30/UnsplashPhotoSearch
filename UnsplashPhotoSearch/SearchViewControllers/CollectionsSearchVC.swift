@@ -52,8 +52,8 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
 
     //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let photosURL = searchData[indexPath.section].photosURL
-        let collectionVC = CollectionVC(url: photosURL)
+        let collection = searchData[indexPath.section]
+        let collectionVC = CollectionVC(collection)
         show(collectionVC, sender: nil)
     }
 

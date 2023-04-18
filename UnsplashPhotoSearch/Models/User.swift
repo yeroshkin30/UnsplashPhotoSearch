@@ -11,7 +11,7 @@ struct User: Codable {
     let id: String
     let name: String
     let username: String
-    let profileImage: URL
+    let imageURL: URL
     let location: String?
     let links: UserLinks
 
@@ -26,7 +26,7 @@ struct User: Codable {
         let customContainer = try decoder.container(keyedBy: CustomKeys.self)
         let imageURL = try customContainer.decode(ProfileImage.self, forKey: .profileImage)
         
-        self.profileImage = imageURL.large
+        self.imageURL = imageURL.large
     }
     
     enum CustomKeys: String, CodingKey{
