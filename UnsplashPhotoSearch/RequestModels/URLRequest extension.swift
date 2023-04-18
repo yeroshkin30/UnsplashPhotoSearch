@@ -34,4 +34,23 @@ extension URLRequest {
 
         self = urlRequest
     }
+
+    init(username: String, mediatype: String, page: Int) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.unsplash.com"
+
+        components.path = "/\(username)/\(mediatype)"
+        components.queryItems = [
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "per_page", value: "30")
+        ]
+
+        let baseURL = URL(string: components.string!)!
+
+        var urlRequest = URLRequest(url: baseURL)
+        urlRequest.setValue("Client-ID ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY", forHTTPHeaderField: "Authorization")
+
+        self = urlRequest
+    }
 }

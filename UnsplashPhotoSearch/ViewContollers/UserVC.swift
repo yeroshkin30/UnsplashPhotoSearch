@@ -12,10 +12,8 @@ class UserVC: UIViewController {
     let userInfoView = UserInfoView()
     let userMediaView = UserMediaView()
 
-    let userController = UserController()
     let user: User
-    var fetchUserMediaTask: Task<Void, Never>?
-    
+
     init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
@@ -28,21 +26,6 @@ class UserVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        fetchUserMedia()
-    }
-
-    func fetchUserMedia() {
-        
-        fetchUserMediaTask = Task {
-            do {
-//                try await userController.fetchUserMedia(category: userMediaView.selectedMediaType(), links: user.links)
-                userMediaView.collectionView.collectionViewLayout = userController.createLayout()
-                userMediaView.collectionView.reloadData()
-                
-            } catch {
-                print(error)
-            }
-        }
     }
 }
 
@@ -51,9 +34,6 @@ private extension UserVC {
         view.backgroundColor = .white
         view.addSubview(userInfoView)
         view.addSubview(userMediaView)
-        
-        userMediaView.collectionView.dataSource = userController
-        userMediaView.collectionView.delegate = userController
 
         userInfoView.configuration = .init(
             name: user.name,

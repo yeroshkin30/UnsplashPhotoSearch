@@ -34,13 +34,13 @@ struct SearchRequest<ItemType: Codable> {
     }
 }
 
-struct fetchPhotos<ItemType: Codable> {
+struct UserMediaRequest<ItemType: Codable> {
     private func decodeResponse(data: Data) throws -> [ItemType] {
         let searchResults = try JSONDecoder().decode([ItemType].self, from: data)
         return searchResults
     }
 
-    func sendRequest(with urlRequest: URLRequest) async throws -> [ItemType] {
+    func send(with urlRequest: URLRequest) async throws -> [ItemType] {
 
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
