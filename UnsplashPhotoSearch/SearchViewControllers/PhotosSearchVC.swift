@@ -14,7 +14,7 @@ class PhotosSearchVC: BaseSearchVC<Photo> {
         setupCollectionView()
     }
 
-    func setupCollectionView() {
+    private func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.photoSearchLayout
@@ -51,8 +51,6 @@ extension PhotosSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func fetchNextPage() {
         let startIndex = searchData.count
-        let itemRange = Array(startIndex...startIndex + 29)
-        let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
 
         Task {
             do {
@@ -61,6 +59,8 @@ extension PhotosSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
             } catch {
                 print(error)
             }
+            let itemRange = Array(startIndex...self.searchData.count - 1)
+            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
             collectionView.insertItems(at: insertedIndexRange)
         }
     }

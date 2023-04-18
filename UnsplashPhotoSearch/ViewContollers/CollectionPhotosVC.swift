@@ -38,11 +38,11 @@ class CollectionVC: UIViewController{
     override func viewDidLayoutSubviews() {
         collectionView.frame = view.bounds
     }
+
     func fetchFirstPage() {
         photoRequestTask = Task {
             do {
-                let photosData = try await FetchPhotos().fetchPhotos(with: photoUrl, page: pageNumber)
-                self.photosData.append(contentsOf: photosData)
+                self.photosData = try await FetchPhotos<Photo>().fetchPhotos(with: photoUrl, page: pageNumber)
             } catch {
                 print(error)
             }
@@ -74,13 +74,29 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
         self.show(photoDetailVC, sender: nil)
     }
 
-    //lags on reloaddata, proble with insert
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lefted = photosData.count - indexPath.item
 
         if lefted == 25 {
             pageNumber += 1
-            fetchFirstPage()
+            fetchNextPage()
+        }
+    }
+
+    func fetchNextPage() {
+        let startIndex = photosData.count
+        Task {
+            do {
+                let photosData = try await FetchPhotos<Photo>().fetchPhotos(with: photoUrl, page: pageNumber)
+                self.photosData.append(contentsOf: photosData)
+            } catch {
+                print(error)
+            }
+            if startIndex < photosData.count {
+                let itemRange = Array(startIndex...photosData.count - 1)
+                let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexRange)
+            }
         }
     }
 }

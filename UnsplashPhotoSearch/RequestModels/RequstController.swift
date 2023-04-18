@@ -29,8 +29,8 @@ struct PhotoDataRequest {
     }
 }
 
-struct FetchPhotos {
-    func fetchPhotos(with url: URL, page: Int) async throws -> [Photo] {
+struct FetchPhotos<ItemType: Codable> {
+    func fetchPhotos(with url: URL, page: Int) async throws -> [ItemType] {
        let queryItems = [
             "page": "\(page)",
             "per_page": "30",
@@ -49,18 +49,9 @@ struct FetchPhotos {
             throw NetworkErrors.photoDataNotFound
         }
 
-        let photoData = try JSONDecoder().decode([Photo].self, from: data)
+        let photoData = try JSONDecoder().decode([ItemType].self, from: data)
 
         return photoData
     }
 }
 
-
-
-struct UserPhotosRequest {
-    func decodeResponse(data: Data) throws -> [Photo] {
-        let photos = try JSONDecoder().decode([Photo].self, from: data)
-        
-        return photos
-    }
-}

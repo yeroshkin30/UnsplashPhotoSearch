@@ -52,7 +52,7 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
 
     //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let photosURL = searchData[indexPath.item].photosURL
+        let photosURL = searchData[indexPath.section].photosURL
         let collectionVC = CollectionVC(url: photosURL)
         show(collectionVC, sender: nil)
     }
@@ -72,7 +72,6 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
 
     func fetchNextPage() {
         let startIndex = searchData.count
-        let itemRange = Array(startIndex...startIndex + 29)
 
         Task {
             do {
@@ -81,6 +80,7 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
             } catch {
                 print(error)
             }
+            let itemRange = Array(startIndex...self.searchData.count - 1)
             collectionView.insertSections(IndexSet(itemRange))
         }
     }

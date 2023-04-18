@@ -37,7 +37,7 @@ class LikesView: UIView {
         likesStackView.distribution = .fillEqually
 
         likesLabel.textColor = .red
-        likesLabel.text  = "123"
+        likesLabel.text  = ""
 
         setupLikeButton()
         setupConstraints()
