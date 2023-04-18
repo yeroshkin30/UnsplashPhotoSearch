@@ -10,16 +10,19 @@ import UIKit
 import Kingfisher
 
 
-class SearchVC: UIViewController, UISearchBarDelegate {
+final class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
+    private let pagingScrollView: UIScrollView = .init()
+    let stackView: UIStackView = .init()
 
-    private let photosSearchController = DataRequestController<Photo>(category: "photos")
-    private let collectionsSearchController = DataRequestController<Collection>(category: "collections")
-    private let usersSearchController = DataRequestController<User>(category: "users")
 
-    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosSearchController )
-    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsSearchController)
-    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersSearchController)
+    private let photosDataRequestController = DataRequestController<Photo>(category: "photos")
+    private let collectionsDataRequestController = DataRequestController<Collection>(category: "collections")
+    private let usersDataRequestController = DataRequestController<User>(category: "users")
+
+    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosDataRequestController )
+    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsDataRequestController)
+    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersDataRequestController)
 
     enum Category: Int {
         case photos
@@ -50,30 +53,19 @@ class SearchVC: UIViewController, UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        searchCategoryChanged()
-
         setupSearchWord()
-    }
+        let width = view.frame.width
+        switch selectedScope {
+        case 0:
+            pagingScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        case 1:
+            pagingScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: true)
+        case 2:
+            pagingScrollView.setContentOffset(CGPoint(x: width * 2, y: 0), animated: true)
 
-
-    func searchCategoryChanged() {
-        let index = searchController.searchBar.selectedScopeButtonIndex
-        chosenCategory = Category(rawValue: index)!
-        switch chosenCategory {
-        case .photos:
-            hideViewController(photosSearchVC)
-        case .collections:
-            hideViewController(collectionsSearchVC)
-        case .users:
-            hideViewController(usersSearchVC)
+        default:
+            return
         }
-    }
-
-    func hideViewController(_ vc: UIViewController) {
-        photosSearchVC.view.isHidden = true
-        collectionsSearchVC.view.isHidden = true
-        usersSearchVC.view.isHidden = true
-        vc.view.isHidden = false
     }
 }
 
@@ -81,7 +73,15 @@ class SearchVC: UIViewController, UISearchBarDelegate {
 private extension SearchVC {
     func setup() {
         view.backgroundColor = .white
+        view.addSubview(pagingScrollView)
 
+        setupSearchController()
+        setupChildVC()
+        scrollViewSetup()
+        setupConstraints()
+    }
+
+    func setupSearchController() {
         navigationItem.searchController = searchController
         searchController.searchBar.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -98,9 +98,6 @@ private extension SearchVC {
             for: .valueChanged
         )
         searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
-
-        setupChildVC()
-        setupConstraints()
     }
 
     func setupChildVC() {
@@ -108,32 +105,44 @@ private extension SearchVC {
         addChild(collectionsSearchVC)
         addChild(usersSearchVC)
 
-        view.addSubview(photosSearchVC.view)
-        view.addSubview(collectionsSearchVC.view)
-        view.addSubview(usersSearchVC.view)
-
         photosSearchVC.didMove(toParent: self)
         collectionsSearchVC.didMove(toParent: self)
         usersSearchVC.didMove(toParent: self)
-
-        collectionsSearchVC.view.isHidden = true
-        usersSearchVC.view.isHidden = true
     }
-    
+
+    func scrollViewSetup() {
+        pagingScrollView.addSubview(stackView)
+        pagingScrollView.isPagingEnabled = true
+        pagingScrollView.isScrollEnabled = false
+
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.addArrangedSubview(photosSearchVC.view)
+        stackView.addArrangedSubview(collectionsSearchVC.view)
+        stackView.addArrangedSubview(usersSearchVC.view)
+    }
+
     func setupConstraints() {
-        photosSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
-        collectionsSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
-        usersSearchVC.view.translatesAutoresizingMaskIntoConstraints = false
+        pagingScrollView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
 
-        [photosSearchVC, usersSearchVC, collectionsSearchVC].forEach {
-            NSLayoutConstraint.activate([
-                $0.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                $0.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                $0.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                $0.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            ])
-        }
+        NSLayoutConstraint.activate([
+            pagingScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            pagingScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            pagingScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            pagingScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            stackView.topAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.bottomAnchor),
+
+            photosSearchVC.view.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            photosSearchVC.view.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+
+        ])
+
     }
 
-    
+
 }
