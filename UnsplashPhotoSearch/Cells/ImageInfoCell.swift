@@ -51,7 +51,7 @@ class ImageInfoCell: UICollectionViewCell {
         imageView.kf.setImage(
             with: preview.photoURL.thumb,
             placeholder: UIImage(blurHash: preview.blurHash ?? "", size: CGSize(width: 30, height: 30), punch: 1),
-            options: [.transition(.fade(0.3))]
+            options: [.transition(.fade(0.7))]
         )
     }
 }

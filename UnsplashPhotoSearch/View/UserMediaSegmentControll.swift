@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UserMediaSegmentControll: UISegmentedControl {
+class UserMediaSegmentControl: UISegmentedControl {
 
     init () {
         super.init(frame: CGRect())

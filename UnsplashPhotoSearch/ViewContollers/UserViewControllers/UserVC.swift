@@ -10,19 +10,18 @@ import Kingfisher
 
 class UserVC: UIViewController {
     let userInfoView = UserInfoView()
-    let userMediaSegmentControll = UserMediaSegmentControll()
+    let userMediaSegmentControl = UserMediaSegmentControl()
     
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
 
-    lazy var userPhotosMediaController: UserMediaController<Photo> = .init(mediatype: "photos", username: user.username)
-    lazy var userLikesMediaController: UserMediaController<Photo> = .init(mediatype: "likes", username: user.username)
-    lazy var userCollectionsMediaController: UserMediaController<Collection> = .init(mediatype: "collections", username: user.username)
+    lazy var userPhotosController: UserMediaController<Photo> = .init(type: .photos(user.username))
+    lazy var userLikesController: UserMediaController<Photo> = .init(type: .likes(user.username))
+    lazy var userCollectionsController: UserMediaController<Collection> = .init(type: .collections(user.username))
     
-    lazy var userPhotosVC: UserPhotosVC = .init(controller: userPhotosMediaController, total: user.totalPhotos)
-    lazy var userLikesVC: UserLikesVC = .init(controller: userPhotosMediaController, total: user.totalLikes)
-    lazy var userCollectionsVC: UserCollectionsVC = .init(controller: userCollectionsMediaController, total: user.totalCollections)
-
+    lazy var userPhotosVC: UserPhotosVC = .init(controller: userPhotosController, total: user.totalPhotos)
+    lazy var userLikesVC: UserLikesVC = .init(controller: userPhotosController, total: user.totalLikes)
+    lazy var userCollectionsVC: UserCollectionsVC = .init(controller: userCollectionsController, total: user.totalCollections)
 
     let user: User
 
@@ -45,7 +44,7 @@ private extension UserVC {
     func setup() {
         view.backgroundColor = .white
         view.addSubview(userInfoView)
-        view.addSubview(userMediaSegmentControll)
+        view.addSubview(userMediaSegmentControl)
         view.addSubview(pagingScrollView)
 
         userInfoView.configuration = .init(
@@ -82,7 +81,7 @@ private extension UserVC {
 
     func setupConstraints() {
         userInfoView.translatesAutoresizingMaskIntoConstraints = false
-        userMediaSegmentControll.translatesAutoresizingMaskIntoConstraints = false
+        userMediaSegmentControl.translatesAutoresizingMaskIntoConstraints = false
         pagingScrollView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -91,12 +90,12 @@ private extension UserVC {
             userInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             userInfoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
 
-            userMediaSegmentControll.topAnchor.constraint(equalTo: userInfoView.bottomAnchor, constant: 10),
-            userMediaSegmentControll.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            userMediaSegmentControll.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            userMediaSegmentControll.heightAnchor.constraint(equalToConstant: 30),
+            userMediaSegmentControl.topAnchor.constraint(equalTo: userInfoView.bottomAnchor, constant: 10),
+            userMediaSegmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            userMediaSegmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            userMediaSegmentControl.heightAnchor.constraint(equalToConstant: 30),
 
-            pagingScrollView.topAnchor.constraint(equalTo: userMediaSegmentControll.bottomAnchor, constant: 3),
+            pagingScrollView.topAnchor.constraint(equalTo: userMediaSegmentControl.bottomAnchor, constant: 3),
             pagingScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             pagingScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             pagingScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -110,6 +109,30 @@ private extension UserVC {
             userPhotosVC.view.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
 
         ])
+    }
+}
+
+extension UserVC {
+    enum MediaType {
+        case photos(_ username: String)
+        case likes(_ username: String)
+        case collections(_ username: String)
+
+        var type: String {
+            switch self {
+            case .photos(_):
+                return "photos"
+            case .likes(_):
+                return "likes"
+            case .collections(_):
+                return "collections"
+            }
+        }
+    }
+
+    struct MediasType {
+        let type: String
+        let username: String
     }
 }
 
