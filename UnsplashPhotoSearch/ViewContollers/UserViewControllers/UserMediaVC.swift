@@ -9,15 +9,17 @@ import UIKit
 
 
 class UserMediaVC<MediaType: Codable>: UIViewController {
-    let collectionView: SearchCollectionView = .init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout()
-    )
-    let mediaRequestController: UserController<MediaType>
+    let collectionView: SearchCollectionView = .init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout())
+    let userMediaController: UserMediaController<MediaType>
 
     var mediaData: [MediaType] = []
     var fetchMediaTask: Task<Void, Never>?
 
-    init(controller: UserController<MediaType>) {
-        self.mediaRequestController = controller
+    let totalItems: Int
+
+    init(controller: UserMediaController<MediaType>, total items: Int) {
+        self.userMediaController = controller
+        self.totalItems = items
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -28,12 +30,13 @@ class UserMediaVC<MediaType: Codable>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        fetchFirstPage()
     }
     func fetchFirstPage() {
         fetchMediaTask?.cancel()
         fetchMediaTask = Task {
             do {
-                self.mediaData = try await mediaRequestController.loadNextPage()
+                self.mediaData = try await userMediaController.loadNextPage()
             } catch {
                 print(error)
             }

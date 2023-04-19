@@ -54,7 +54,7 @@ extension UserPhotosVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
         Task {
             do {
-                let mediaData = try await mediaRequestController.loadNextPage()
+                let mediaData = try await userMediaController.loadNextPage()
                 self.mediaData.append(contentsOf: mediaData)
             } catch {
                 print(error)

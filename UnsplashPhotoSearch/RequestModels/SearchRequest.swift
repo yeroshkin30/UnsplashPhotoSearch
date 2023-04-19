@@ -16,7 +16,7 @@ enum NetworkErrors: Error {
 struct SearchRequest<ItemType: Codable> {
 
     private func decodeResponse(data: Data) throws -> [ItemType] {
-        let searchResults = try JSONDecoder().decode(PhotoSearchResults<ItemType>.self, from: data)
+        let searchResults = try JSONDecoder().decode(SearchResults<ItemType>.self, from: data)
         return searchResults.results
     }
 

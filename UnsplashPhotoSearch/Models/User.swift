@@ -9,53 +9,51 @@ import Foundation
 
 struct User: Codable {
     let id: String
-    let name: String
     let username: String
-    let imageURL: URL
+    let name: String
     let location: String?
+    let totalPhotos: Int
+    let totalLikes: Int
+    let totalCollections: Int
+    let imageURL: URL
     let links: UserLinks
 
-    
+
+    enum CustomKeys: String, CodingKey {
+        case id
+        case username
+        case name
+        case location
+        case totalPhotos = "total_photos"
+        case totalLikes = "total_likes"
+        case totalCollections = "total_collections"
+        case profileImageURL = "profile_image"
+        case links
+    }
+
+    enum ProfileImageKey: String, CodingKey {
+        case large
+    }
+
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(String.self, forKey: .id)
-        self.name = try container.decode(String.self, forKey: .name)
-        self.username = try container.decode(String.self, forKey: .username)
-        self.location = try container.decodeIfPresent(String.self, forKey: .location)
-        self.links = try container.decode(UserLinks.self, forKey: .links)
-        let customContainer = try decoder.container(keyedBy: CustomKeys.self)
-        let imageURL = try customContainer.decode(ProfileImage.self, forKey: .profileImage)
-        
-        self.imageURL = imageURL.large
-    }
-    
-    enum CustomKeys: String, CodingKey{
-        case profileImage = "profile_image"
-    }
-    
-    struct ProfileImage: Codable {
-        let large: URL
-    }
-    
-    
-}
 
-extension User: Hashable, Comparable {
-    static func == (lhs: User, rhs: User) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    
-    static func < (lhs: User, rhs: User) -> Bool {
-        lhs.id < rhs.id
-    }
+        let values = try decoder.container(keyedBy: CustomKeys.self)
+        id = try values.decode(String.self, forKey: .id)
+        username = try values.decode(String.self, forKey: .username)
+        name = try values.decode(String.self, forKey: .name)
+        location = try? values.decode(String.self, forKey: .location)
+        totalPhotos = try values.decode(Int.self, forKey: .totalPhotos)
+        totalLikes = try values.decode(Int.self, forKey: .totalLikes)
+        totalCollections = try values.decode(Int.self, forKey: .totalCollections)
+        links = try values.decode(UserLinks.self, forKey: .links)
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        let profileImageURLs = try values.nestedContainer(keyedBy: ProfileImageKey.self, forKey: .profileImageURL)
+        imageURL = try profileImageURLs.decode(URL.self, forKey: .large)
     }
 }
 
 struct UserLinks: Codable {
     let photos: URL
     let likes: URL
+    let followers: URL
 }

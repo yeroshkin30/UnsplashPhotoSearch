@@ -40,7 +40,7 @@ extension URLRequest {
         components.scheme = "https"
         components.host = "api.unsplash.com"
 
-        components.path = "/\(username)/\(mediatype)"
+        components.path = "/users/\(username)/\(mediatype)"
         components.queryItems = [
             URLQueryItem(name: "page", value: "\(page)"),
             URLQueryItem(name: "per_page", value: "30")

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UserController<FetchedItem: Codable> {
+class UserMediaController<FetchedItem: Codable> {
 
     private var currentPage: Int = 0
     private var userMediaType: String

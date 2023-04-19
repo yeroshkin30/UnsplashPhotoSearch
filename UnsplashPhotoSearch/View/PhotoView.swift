@@ -73,7 +73,7 @@ extension PhotoView {
 
         init(photo: Photo) {
             numberOfLikes = photo.likes ?? 0
-            imageURL = photo.photoURL.full
+            imageURL = photo.photoURL.regular
             placeholder = UIImage.blurHash(from: photo)
         }
     }
