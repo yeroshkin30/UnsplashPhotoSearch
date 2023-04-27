@@ -8,8 +8,7 @@
 import UIKit
 
 class BaseSearchVC<ItemType: Codable>: UIViewController {
-    let collectionView: SearchCollectionView = .init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout()
-    )
+    let collectionView = UICollectionView.initWithCells()
     let dataRequestController: DataRequestController<ItemType>
     var searchTask: Task<Void, Never>?
     var searchData: [ItemType] = []

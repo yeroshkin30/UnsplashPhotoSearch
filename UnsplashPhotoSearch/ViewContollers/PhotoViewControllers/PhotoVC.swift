@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 
 class PhotoVC: UIViewController {
@@ -24,31 +25,33 @@ class PhotoVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
         update()
     }
 
-    
     func update() {
+
         Task {
-            self.photoView.configuration = .init(photo: self.photo)
-
+            photoView.configuration = .init(photo: self.photo)
             self.photo = try await PhotoDataRequest().fetchPhotoData(photoId: photo.id)
-
         }
-    }
-
-    override func viewWillLayoutSubviews() {
-        photoView.frame = view.bounds
     }
 }
 
 private extension PhotoVC {
-
     func setupUI() {
+        view.backgroundColor = .white
         view.addSubview(photoView)
         title = photo.user?.username
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+
+        navigationItem.standardAppearance = appearance
+
+        photoView.snp.makeConstraints { make in
+            make.left.right.bottom.top.equalToSuperview()
+        }
 
         photoView.infoButtonEvent = {
             let detailVC = PhotoDetailVC(location: self.photo.location!)

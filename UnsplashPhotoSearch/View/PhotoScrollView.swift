@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PhotoScrollView: UIScrollView, UIScrollViewDelegate {
+class PhotoScrollView: UIScrollView {
     private let imageView: UIImageView = .init()
     var image: UIImage? {
         get {
@@ -27,20 +27,17 @@ class PhotoScrollView: UIScrollView, UIScrollViewDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func layoutSubviews() {
-        super.layoutSubviews()
-
+//        centerImage()
     }
+
     private func setup() {
         addSubview(imageView)
         delegate = self
         imageView.contentMode = .scaleAspectFit
         imageView.frame = bounds
-    }
-
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        imageView
+        setupContentInset()
     }
 
     private func updateMinZoomForScale(size: CGSize) {
@@ -50,6 +47,26 @@ class PhotoScrollView: UIScrollView, UIScrollViewDelegate {
 
         minimumZoomScale = minScale
         zoomScale = minScale
+    }
 
+    private func setupContentInset() {
+        var hInset = (bounds.width - contentSize.width) / 2
+        var vInset = (bounds.height - contentSize.height) / 2
+
+        hInset = hInset > 0 ? hInset : 0
+        vInset = vInset > 0 ? vInset : 0
+
+        contentInset = UIEdgeInsets(top: vInset, left: hInset, bottom: vInset, right: hInset)
+    }
+}
+
+extension PhotoScrollView: UIScrollViewDelegate {
+
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        imageView
+    }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        setupContentInset()
     }
 }

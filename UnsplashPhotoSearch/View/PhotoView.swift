@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SnapKit
 
 class PhotoView: UIView {
     private let likesView: LikesView = .init()
@@ -46,21 +47,19 @@ class PhotoView: UIView {
     }
 
     func setupConstraints() {
-        likesView.translatesAutoresizingMaskIntoConstraints = false
-        infoButton.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: topAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
-            likesView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
-            likesView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
+        infoButton.snp.makeConstraints { maker in
+            maker.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-40)
+            maker.left.equalToSuperview().offset(5)
+        }
 
-            infoButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
-            infoButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
-        ])
+        likesView.snp.makeConstraints { maker in
+            maker.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-40)
+            maker.right.equalToSuperview().offset(-5)
+        }
     }
 }
 
@@ -73,7 +72,7 @@ extension PhotoView {
 
         init(photo: Photo) {
             numberOfLikes = photo.likes ?? 0
-            imageURL = photo.photoURL.regular
+            imageURL = photo.photoURL.full
             placeholder = UIImage.blurHash(from: photo)
         }
     }
@@ -86,7 +85,7 @@ private extension PhotoView {
 
         likesView.likesLabel.text = "\(configuration.numberOfLikes)"
 
-        scrollView.image = configuration.placeholder
+//        scrollView.image = configuration.placeholder
 
         KingfisherManager.shared.retrieveImage(with: configuration.imageURL, completionHandler: { result in
             switch result {

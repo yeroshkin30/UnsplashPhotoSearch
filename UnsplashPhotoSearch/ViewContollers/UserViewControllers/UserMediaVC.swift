@@ -9,7 +9,7 @@ import UIKit
 
 
 class UserMediaVC<MediaType: Codable>: UIViewController {
-    let collectionView: SearchCollectionView = .init(frame: CGRect.zero, collectionViewLayout: UICollectionViewLayout())
+    let collectionView = UICollectionView.initWithCells()
     let userMediaController: UserMediaController<MediaType>
 
     var mediaData: [MediaType] = []
