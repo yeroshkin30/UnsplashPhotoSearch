@@ -172,6 +172,36 @@
 			path = RequestModels;
 			sourceTree = "<group>";
 		};
+		7C45F16329FC25340071E4A5 /* PhotoVC */ = {
+			isa = PBXGroup;
+			children = (
+				18E865F429D76E7300F496CB /* PhotoVC.swift */,
+				7CC79E3D29DC8D500083F013 /* PhotoDetailVC.swift */,
+				7C45F16529FC25D50071E4A5 /* Views */,
+			);
+			path = PhotoVC;
+			sourceTree = "<group>";
+		};
+		7C45F16429FC25820071E4A5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				18F3DC0E29E16D4100F0F93B /* UserMediaSegmentControll.swift */,
+				7CC79E4829E08DB60083F013 /* UserInfoView.swift */,
+				7CC79E4629E07B360083F013 /* PhotoDetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7C45F16529FC25D50071E4A5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				18F3DC0829DDE47900F0F93B /* PhotoView.swift */,
+				7CC79E4C29E2AB920083F013 /* PhotoScrollView.swift */,
+				18F3DC0A29DDF0F700F0F93B /* LikesView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		7C66AD9F29EAB16D00B1C7A6 /* SearchViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +235,7 @@
 		7CC06E5329EFE91400E39F69 /* UserViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				7C45F16429FC25820071E4A5 /* Views */,
 				7CC79E3B29DC8C550083F013 /* UserVC.swift */,
 				7C957A9C29EF37C400ACBDC0 /* UserMediaVC.swift */,
 				7CC06E5129EFE1A500E39F69 /* UserCollecitonsVC.swift */,
@@ -218,8 +249,7 @@
 			isa = PBXGroup;
 			children = (
 				18F3DBFF29DAF21500F0F93B /* CollectionVC.swift */,
-				18E865F429D76E7300F496CB /* PhotoVC.swift */,
-				7CC79E3D29DC8D500083F013 /* PhotoDetailVC.swift */,
+				7C45F16329FC25340071E4A5 /* PhotoVC */,
 			);
 			path = PhotoViewControllers;
 			sourceTree = "<group>";
@@ -227,12 +257,6 @@
 		7CC79E3F29DD697E0083F013 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				18F3DC0E29E16D4100F0F93B /* UserMediaSegmentControll.swift */,
-				7CC79E4829E08DB60083F013 /* UserInfoView.swift */,
-				7CC79E4629E07B360083F013 /* PhotoDetailView.swift */,
-				18F3DC0829DDE47900F0F93B /* PhotoView.swift */,
-				7CC79E4C29E2AB920083F013 /* PhotoScrollView.swift */,
-				18F3DC0A29DDF0F700F0F93B /* LikesView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
