@@ -7,19 +7,20 @@
 
 import UIKit
 import MapKit
+import SnapKit
+import CoreLocation
+
 class PhotoDetailView: UIView {
-    var countryNameLabel: UILabel = .init()
-    var cityNameLabel: UILabel = .init()
+    private let countryNameLabel: UILabel = .init()
+    private let cityNameLabel: UILabel = .init()
     private let stackView: UIStackView = .init()
+    private let mapView: MKMapView = .init()
 
-    private lazy var mapViewHeight =  mapView.heightAnchor.constraint(equalToConstant: 300)
-    private lazy var mapViewHeightZero = mapView.heightAnchor.constraint(equalToConstant: 0)
+    private let location: Location
 
-
-    let mapView = MKMapView()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(location: Location) {
+        self.location = location
+        super.init(frame: CGRect())
         setupView()
     }
 
@@ -30,39 +31,55 @@ class PhotoDetailView: UIView {
     private func setupView() {
         backgroundColor = .gray
         addSubview(stackView)
-        addSubview(mapView)
 
+        stackView.addArrangedSubview(mapView)
         stackView.addArrangedSubview(countryNameLabel)
         stackView.addArrangedSubview(cityNameLabel)
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.distribution  = .fillEqually
+        stackView.distribution  = .fill
         stackView.spacing = 8
 
         cityNameLabel.font = UIFont.systemFont(ofSize: 20)
         countryNameLabel.font = UIFont.systemFont(ofSize: 20)
+        countryNameLabel.text = "Country: \(location.country ?? "")"
+        cityNameLabel.text = "City: \(location.city ?? "")"
 
+        setupMapView()
         setupConstraints()
     }
 
-    func changeMapHeight() {
-        mapViewHeight.isActive = false
-        mapViewHeightZero.isActive = true
+    private func setupMapView() {
+        guard let latitude = location.position.latitude,
+              let longitude = location.position.longitude else {
+            mapView.isHidden = true
+            return
+        }
+
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+        mapView.setRegion(
+            MKCoordinateRegion(
+                center: coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)),
+            animated: true
+        )
+
+        let pin = MKPointAnnotation()
+        pin.coordinate = coordinate
+        mapView.addAnnotation(pin)
+        mapView.layer.cornerRadius = 10
     }
 
     private func setupConstraints() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        mapView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalTo(safeAreaLayoutGuide)
+                .inset(UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10))
+        }
 
-        NSLayoutConstraint.activate([
-            mapView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 15),
-            mapView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            mapView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            mapViewHeight,
-
-            stackView.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 10),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-        ])
+        mapView.snp.makeConstraints { make in
+            make.height.equalTo(snp.height).multipliedBy(0.3)
+            make.width.equalTo(stackView.snp.width)
+        }
     }
 }

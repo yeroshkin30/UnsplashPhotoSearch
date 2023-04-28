@@ -8,7 +8,7 @@
 
 import UIKit
 import Kingfisher
-
+import SnapKit
 
 final class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
@@ -31,7 +31,7 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     }
 
     func changeSearchWord() {
-        let word = "ocean"
+        let word = "panda"
 
         photosSearchVC.searchWordDidChange(word)
         collectionsSearchVC.searchWordDidChange(word)
@@ -91,6 +91,10 @@ private extension SearchVC {
         addChild(collectionsSearchVC)
         addChild(usersSearchVC)
 
+        stackView.addArrangedSubview(photosSearchVC.view)
+        stackView.addArrangedSubview(collectionsSearchVC.view)
+        stackView.addArrangedSubview(usersSearchVC.view)
+        
         photosSearchVC.didMove(toParent: self)
         collectionsSearchVC.didMove(toParent: self)
         usersSearchVC.didMove(toParent: self)
@@ -103,31 +107,23 @@ private extension SearchVC {
 
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-        stackView.addArrangedSubview(photosSearchVC.view)
-        stackView.addArrangedSubview(collectionsSearchVC.view)
-        stackView.addArrangedSubview(usersSearchVC.view)
+
     }
 
     func setupConstraints() {
-        pagingScrollView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        pagingScrollView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.snp.bottom)
+        }
 
-        NSLayoutConstraint.activate([
-            pagingScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            pagingScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            pagingScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            pagingScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        stackView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalTo(pagingScrollView.contentLayoutGuide)
+        }
 
-            stackView.topAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.bottomAnchor),
-
-            photosSearchVC.view.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
-            photosSearchVC.view.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
-
-        ])
-
+        photosSearchVC.view.snp.makeConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide.snp.height)
+            make.width.equalTo(view.safeAreaLayoutGuide.snp.width)
+        }
     }
 
 

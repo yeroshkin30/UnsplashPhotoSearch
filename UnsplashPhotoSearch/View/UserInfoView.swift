@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class UserInfoView: UIView {
     private let usernameLabel: UILabel = .init()
@@ -69,14 +70,9 @@ class UserInfoView: UIView {
     }
 
     private func setupConstraints() {
-        userDataStackView.translatesAutoresizingMaskIntoConstraints = false
-        profileImage.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            userDataStackView.topAnchor.constraint(equalTo: topAnchor),
-            userDataStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            userDataStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            userDataStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
+        userDataStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 }
 

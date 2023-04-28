@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SnapKit
 
 class UserVC: UIViewController {
     let userInfoView = UserInfoView()
@@ -52,6 +53,7 @@ private extension UserVC {
             username: user.username,
             imageURL: user.imageURL
         )
+
         setupChildVC()
         scrollViewSetup()
         setupConstraints()
@@ -61,6 +63,10 @@ private extension UserVC {
         addChild(userPhotosVC)
         addChild(userLikesVC)
         addChild(userCollectionsVC)
+
+        stackView.addArrangedSubview(userPhotosVC.view)
+        stackView.addArrangedSubview(userLikesVC.view)
+        stackView.addArrangedSubview(userCollectionsVC.view)
 
         userPhotosVC.didMove(toParent: self)
         userLikesVC.didMove(toParent: self)
@@ -74,41 +80,34 @@ private extension UserVC {
 
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-        stackView.addArrangedSubview(userPhotosVC.view)
-        stackView.addArrangedSubview(userLikesVC.view)
-        stackView.addArrangedSubview(userCollectionsVC.view)
+
     }
 
     func setupConstraints() {
-        userInfoView.translatesAutoresizingMaskIntoConstraints = false
-        userMediaSegmentControl.translatesAutoresizingMaskIntoConstraints = false
-        pagingScrollView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        userInfoView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+                .inset(UIEdgeInsets(top: 15, left: 8, bottom: 0, right: 8))
+        }
 
-        NSLayoutConstraint.activate([
-            userInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
-            userInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            userInfoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+        userMediaSegmentControl.snp.makeConstraints { make in
+            make.top.equalTo(userInfoView.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(30)
+        }
 
-            userMediaSegmentControl.topAnchor.constraint(equalTo: userInfoView.bottomAnchor, constant: 10),
-            userMediaSegmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            userMediaSegmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            userMediaSegmentControl.heightAnchor.constraint(equalToConstant: 30),
+        pagingScrollView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(userMediaSegmentControl.snp.bottom).offset(3)
+        }
 
-            pagingScrollView.topAnchor.constraint(equalTo: userMediaSegmentControl.bottomAnchor, constant: 3),
-            pagingScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            pagingScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            pagingScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        stackView.snp.makeConstraints { make in
+            make.top.bottom.leading.trailing.equalTo(pagingScrollView.contentLayoutGuide)
+        }
 
-            stackView.topAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: pagingScrollView.contentLayoutGuide.bottomAnchor),
-
-            userPhotosVC.view.heightAnchor.constraint(equalToConstant: 500),
-            userPhotosVC.view.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
-
-        ])
+        userPhotosVC.view.snp.makeConstraints { make in
+            make.height.equalTo(500)
+            make.width.equalTo(view.snp.width)
+        }
     }
 }
 

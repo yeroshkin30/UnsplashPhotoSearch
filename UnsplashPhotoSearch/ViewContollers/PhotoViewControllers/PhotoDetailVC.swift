@@ -6,11 +6,9 @@
 //
 
 import UIKit
-import MapKit
-import CoreLocation
 
 class PhotoDetailVC: UIViewController {
-    let photoDetailView = PhotoDetailView()
+    lazy var photoDetailView = PhotoDetailView(location: location)
     let location: Location
     
     init(location: Location) {
@@ -42,32 +40,8 @@ private extension PhotoDetailVC {
         title = "Info"
         view.addSubview(photoDetailView)
         view.backgroundColor = .gray
-        photoDetailView.countryNameLabel.text = "Country: \(location.country ?? "")"
-        photoDetailView.cityNameLabel.text = "City: \(location.city ?? "")"
 
-        setupMapView()
         setupConstraints()
-    }
-
-    func setupMapView() {
-        guard let latitude = location.position.latitude, let longitude = location.position.longitude else {
-            photoDetailView.changeMapHeight()
-            return
-        }
-    
-        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        
-        photoDetailView.mapView.setRegion(
-            MKCoordinateRegion(
-                center: coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)),
-            animated: true
-        )
-
-        let pin = MKPointAnnotation()
-        pin.coordinate = coordinate
-        photoDetailView.mapView.addAnnotation(pin)
-        
     }
     
     func setupConstraints() {
