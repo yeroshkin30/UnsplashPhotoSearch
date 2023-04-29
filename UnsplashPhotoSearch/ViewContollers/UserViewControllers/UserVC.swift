@@ -10,19 +10,19 @@ import Kingfisher
 import SnapKit
 
 class UserVC: UIViewController {
-    let userInfoView = UserInfoView()
-    let userMediaSegmentControl = UserMediaSegmentControl()
+    private let userInfoView = UserInfoView()
+    private let mediaSegmentedControl: UISegmentedControl = .init()
     
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
 
-    lazy var userPhotosController: UserMediaController<Photo> = .init(type: .photos(user.username))
-    lazy var userLikesController: UserMediaController<Photo> = .init(type: .likes(user.username))
-    lazy var userCollectionsController: UserMediaController<Collection> = .init(type: .collections(user.username))
+    lazy var photosController: UserMediaController<Photo> = .init(MediaType.photos.rawValue, username: user.username)
+    lazy var likesController: UserMediaController<Photo> = .init(MediaType.likes.rawValue, username: user.username)
+    lazy var collectionsController: UserMediaController<Collection> = .init(MediaType.collections.rawValue, username: user.username)
     
-    lazy var userPhotosVC: UserPhotosVC = .init(controller: userPhotosController, total: user.totalPhotos)
-    lazy var userLikesVC: UserLikesVC = .init(controller: userPhotosController, total: user.totalLikes)
-    lazy var userCollectionsVC: UserCollectionsVC = .init(controller: userCollectionsController, total: user.totalCollections)
+    lazy var userPhotosVC: UserPhotosVC = .init(controller: photosController)
+    lazy var userLikesVC: UserLikesVC = .init(controller: likesController)
+    lazy var userCollectionsVC: UserCollectionsVC = .init(controller: collectionsController)
 
     let user: User
 
@@ -39,13 +39,27 @@ class UserVC: UIViewController {
         super.viewDidLoad()
         setup()
     }
+
+    @objc func segmentDidChange(_ sender: UISegmentedControl) {
+        let width = view.frame.width
+        switch sender.selectedSegmentIndex {
+        case 0:
+            pagingScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        case 1:
+            pagingScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: true)
+        case 2:
+            pagingScrollView.setContentOffset(CGPoint(x: width * 2, y: 0), animated: true)
+        default:
+            return
+        }
+    }
 }
 
 private extension UserVC {
     func setup() {
         view.backgroundColor = .white
         view.addSubview(userInfoView)
-        view.addSubview(userMediaSegmentControl)
+        view.addSubview(mediaSegmentedControl)
         view.addSubview(pagingScrollView)
 
         userInfoView.configuration = .init(
@@ -55,8 +69,20 @@ private extension UserVC {
         )
 
         setupChildVC()
+        segmentControlSetup()
         scrollViewSetup()
         setupConstraints()
+    }
+
+
+
+    func segmentControlSetup() {
+        mediaSegmentedControl.insertSegment(withTitle: "Photos", at: 0, animated: false)
+        mediaSegmentedControl.insertSegment(withTitle: "Likes", at: 1, animated: false)
+        mediaSegmentedControl.insertSegment(withTitle: "Collections", at: 2, animated: false)
+        mediaSegmentedControl.selectedSegmentIndex = 0
+
+        mediaSegmentedControl.addTarget(self, action: #selector(segmentDidChange), for: .valueChanged)
     }
 
     func setupChildVC() {
@@ -75,8 +101,8 @@ private extension UserVC {
 
     func scrollViewSetup() {
         pagingScrollView.addSubview(stackView)
-//        pagingScrollView.isPagingEnabled = true
-//        pagingScrollView.isScrollEnabled = false
+        pagingScrollView.isPagingEnabled = true
+        pagingScrollView.isScrollEnabled = false
 
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
@@ -89,7 +115,7 @@ private extension UserVC {
                 .inset(UIEdgeInsets(top: 15, left: 8, bottom: 0, right: 8))
         }
 
-        userMediaSegmentControl.snp.makeConstraints { make in
+        mediaSegmentedControl.snp.makeConstraints { make in
             make.top.equalTo(userInfoView.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(30)
@@ -97,7 +123,7 @@ private extension UserVC {
 
         pagingScrollView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalTo(userMediaSegmentControl.snp.bottom).offset(3)
+            make.top.equalTo(mediaSegmentedControl.snp.bottom).offset(3)
         }
 
         stackView.snp.makeConstraints { make in
@@ -105,33 +131,17 @@ private extension UserVC {
         }
 
         userPhotosVC.view.snp.makeConstraints { make in
-            make.height.equalTo(500)
+            make.height.equalTo(pagingScrollView.snp.height)
             make.width.equalTo(view.snp.width)
         }
     }
 }
 
 extension UserVC {
-    enum MediaType {
-        case photos(_ username: String)
-        case likes(_ username: String)
-        case collections(_ username: String)
+    enum MediaType: String {
+        case photos
+        case likes
+        case collections
 
-        var type: String {
-            switch self {
-            case .photos(_):
-                return "photos"
-            case .likes(_):
-                return "likes"
-            case .collections(_):
-                return "collections"
-            }
-        }
-    }
-
-    struct MediasType {
-        let type: String
-        let username: String
     }
 }
-

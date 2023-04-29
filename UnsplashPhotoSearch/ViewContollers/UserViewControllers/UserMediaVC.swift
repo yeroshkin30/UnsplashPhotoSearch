@@ -15,16 +15,18 @@ class UserMediaVC<MediaType: Codable>: UIViewController {
     var mediaData: [MediaType] = []
     var fetchMediaTask: Task<Void, Never>?
 
-    let totalItems: Int
-
-    init(controller: UserMediaController<MediaType>, total items: Int) {
+    init(controller: UserMediaController<MediaType>) {
         self.userMediaController = controller
-        self.totalItems = items
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.frame = view.bounds
     }
 
     override func viewDidLoad() {
@@ -47,6 +49,5 @@ class UserMediaVC<MediaType: Codable>: UIViewController {
 
     func setup() {
         view.addSubview(collectionView)
-        collectionView.frame = view.bounds
     }
 }

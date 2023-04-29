@@ -27,14 +27,12 @@ class PhotoScrollView: UIScrollView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func layoutSubviews() {
-//        centerImage()
-    }
 
     private func setup() {
         addSubview(imageView)
         delegate = self
+        contentInsetAdjustmentBehavior = .never
+        
         imageView.contentMode = .scaleAspectFit
         imageView.frame = bounds
         setupContentInset()

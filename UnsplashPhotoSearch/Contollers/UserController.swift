@@ -13,19 +13,10 @@ class UserMediaController<FetchedItem: Codable> {
     private var mediaType: String
     private var username: String
 
-    init(type: UserVC.MediaType) {
-        self.mediaType = type.type
-        switch type {
-        case .photos(let username):
-            self.username = username
-        case .likes(let username):
-            self.username = username
-        case .collections(let username):
-            self.username = username
-        }
+    init(_ mediaType: String, username: String) {
+        self.mediaType = mediaType
+        self.username = username
     }
-
-
 
     private func request(currentPage: Int) -> URLRequest {
         URLRequest(

@@ -59,9 +59,11 @@ extension UserPhotosVC: UICollectionViewDataSource, UICollectionViewDelegate {
             } catch {
                 print(error)
             }
-            let itemRange = Array(startIndex...self.mediaData.count - 1)
-            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexRange)
+            if mediaData.count > startIndex {
+                let itemRange = Array(startIndex...self.mediaData.count - 1)
+                let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexRange)
+            }
         }
     }
 }
