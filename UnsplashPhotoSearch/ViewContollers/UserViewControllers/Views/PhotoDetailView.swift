@@ -16,10 +16,7 @@ class PhotoDetailView: UIView {
     private let stackView: UIStackView = .init()
     private let mapView: MKMapView = .init()
 
-    private let location: Location
-
-    init(location: Location) {
-        self.location = location
+    init() {
         super.init(frame: CGRect())
         setupView()
     }
@@ -28,34 +25,16 @@ class PhotoDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupView() {
-        backgroundColor = .gray
-        addSubview(stackView)
 
-        stackView.addArrangedSubview(mapView)
-        stackView.addArrangedSubview(countryNameLabel)
-        stackView.addArrangedSubview(cityNameLabel)
-        stackView.axis = .vertical
-        stackView.alignment = .leading
-        stackView.distribution  = .fill
-        stackView.spacing = 8
-
-        cityNameLabel.font = UIFont.systemFont(ofSize: 20)
-        countryNameLabel.font = UIFont.systemFont(ofSize: 20)
+    func locationSetup(location: Location) {
         countryNameLabel.text = "Country: \(location.country ?? "")"
         cityNameLabel.text = "City: \(location.city ?? "")"
 
-        setupMapView()
-        setupConstraints()
-    }
-
-    private func setupMapView() {
         guard let latitude = location.position.latitude,
               let longitude = location.position.longitude else {
-            mapView.isHidden = true
             return
         }
-
+        mapView.isHidden = false
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
 
         mapView.setRegion(
@@ -70,6 +49,29 @@ class PhotoDetailView: UIView {
         mapView.addAnnotation(pin)
         mapView.layer.cornerRadius = 10
     }
+
+    private func setupView() {
+        backgroundColor = .gray
+        addSubview(stackView)
+        mapView.isHidden = true
+
+        stackView.addArrangedSubview(mapView)
+        stackView.addArrangedSubview(countryNameLabel)
+        stackView.addArrangedSubview(cityNameLabel)
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution  = .fill
+        stackView.spacing = 8
+
+        cityNameLabel.font = UIFont.systemFont(ofSize: 20)
+        countryNameLabel.font = UIFont.systemFont(ofSize: 20)
+        countryNameLabel.text = "Country:"
+        cityNameLabel.text = "City:"
+
+        setupConstraints()
+    }
+
+
 
     private func setupConstraints() {
         stackView.snp.makeConstraints { make in

@@ -9,7 +9,7 @@ import UIKit
 
 class UserMediaController<FetchedItem: Codable> {
 
-    private var currentPage: Int = 0
+    private var page: Int = 0
     private var mediaType: String
     private var username: String
 
@@ -18,18 +18,12 @@ class UserMediaController<FetchedItem: Codable> {
         self.username = username
     }
 
-    private func request(currentPage: Int) -> URLRequest {
-        URLRequest(
-            username: username,
-            mediatype: mediaType,
-            page: currentPage
-        )
-    }
+
     //actor
     func loadNextPage() async throws -> [FetchedItem] {
-        currentPage += 1
-        let urlRequest = request(currentPage: currentPage)
-        let searchItems = try await  UserMediaRequest<FetchedItem>().send(with: urlRequest)
+        page += 1
+        let urlRequest = URLRequest.UnsplashAPI.userMedia(username: username, mediaType: mediaType, page: page)
+        let searchItems = try await UnsplashNetwork<[FetchedItem]>().fetch(from: urlRequest)
 
         return searchItems
     }

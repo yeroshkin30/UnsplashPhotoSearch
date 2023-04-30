@@ -8,13 +8,12 @@
 import UIKit
 
 extension UIImage {
-   static func blurHash(from photo: Photo) -> UIImage {
+   static func blurHash(from photo: Photo) -> UIImage? {
         let blurHash = photo.blurHash
-        let blurHashHeight = photo.height / 100
-        let blurHashWidth = photo.width / 100
-        let blurHashSize = CGSize(width: blurHashWidth, height: blurHashHeight)
 
-        let image = UIImage(blurHash: blurHash ?? "", size: blurHashSize)!
+        let blurHashSize = CGSize(width: 6, height: 6)
+
+        let image = UIImage(blurHash: blurHash ?? "", size: blurHashSize)
 
         return image
     }

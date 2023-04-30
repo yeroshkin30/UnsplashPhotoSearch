@@ -50,7 +50,7 @@ class ImageInfoCell: UICollectionViewCell {
     func configure(with preview: PreviewPhoto) {
         imageView.kf.setImage(
             with: preview.photoURL.thumb,
-            placeholder: UIImage(blurHash: preview.blurHash ?? "", size: CGSize(width: 30, height: 30), punch: 1),
+            placeholder: UIImage(blurHash: preview.blurHash ?? "", size: CGSize(width: 5, height: 5), punch: 1),
             options: [.transition(.fade(0.7))]
         )
     }

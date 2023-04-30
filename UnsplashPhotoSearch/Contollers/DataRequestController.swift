@@ -8,7 +8,6 @@
 import UIKit
 
 class DataRequestController<SearchItem: Codable> {
-    
     private var searchItems: [SearchItem] = []
     private var currentPage: Int = 0
     private var category: String
@@ -22,16 +21,10 @@ class DataRequestController<SearchItem: Codable> {
         self.category = category
     }
 
-    private func request(currentPage: Int) -> URLRequest {
-        URLRequest(
-            path: category,
-            queryItems: Array.pageQueryItems(searchWord: searchWord!, page: currentPage)
-        )
-    }
     //actor
     func loadNextPage() async throws -> [SearchItem] {
         currentPage += 1
-        let urlRequest = request(currentPage: currentPage)
+        let urlRequest = URLRequest.UnsplashAPI.search(category: category, word: searchWord!, page: currentPage)
 
         let searchItems = try await SearchRequest<SearchItem>().sendRequest(with: urlRequest)
         self.searchItems = searchItems

@@ -80,8 +80,10 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
             } catch {
                 print(error)
             }
-            let itemRange = Array(startIndex...self.searchData.count - 1)
-            collectionView.insertSections(IndexSet(itemRange))
+            if searchData.count > startIndex {
+                let itemRange = Array(startIndex...self.searchData.count - 1)
+                collectionView.insertSections(IndexSet(itemRange))
+            }
         }
     }
 }

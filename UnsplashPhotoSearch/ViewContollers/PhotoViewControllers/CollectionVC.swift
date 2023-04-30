@@ -10,9 +10,9 @@ import UIKit
 class CollectionVC: UIViewController {
     var collectionView: UICollectionView = .init(frame: CGRect(), collectionViewLayout: UICollectionViewCompositionalLayout.photoSearchLayout)
     let collection: Collection
-    var photosData: [Photo] = []
-    var pageNumber = 1
-
+    var collectionPhotos: [Photo] = []
+    var page = 1
+    let requestController = UnsplashNetwork<[Photo]>()
     var photoRequestTask: Task<Void, Never>?
 
     init (_ collection: Collection) {
@@ -34,7 +34,8 @@ class CollectionVC: UIViewController {
     func fetchFirstPage() {
         photoRequestTask = Task {
             do {
-                self.photosData = try await FetchPhotos<Photo>().fetchPhotos(with: collection.photosURL, page: pageNumber)
+                let request = URLRequest.UnsplashAPI.collectionsPhoto(id: collection.id, page: page)
+                self.collectionPhotos = try await requestController.fetch(from: request)
             } catch {
                 print(error)
             }
@@ -56,12 +57,12 @@ class CollectionVC: UIViewController {
 extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photosData.count
+        return collectionPhotos.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
-        let item = photosData[indexPath.item]
+        let item = collectionPhotos[indexPath.item]
         cell.configure(with: item)
 
         return cell
@@ -69,34 +70,35 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
     //DELEGATE
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let photo = photosData[indexPath.item]
+        let photo = collectionPhotos[indexPath.item]
         let photoDetailVC = PhotoVC(photo: photo)
         
         self.show(photoDetailVC, sender: nil)
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let itemsLeft = photosData.count - indexPath.item
+        let itemsLeft = collectionPhotos.count - indexPath.item
 
         if itemsLeft == 25 {
-            pageNumber += 1
+            page += 1
             fetchNextPage()
         }
     }
 
     func fetchNextPage() {
-        guard collection.totalPhotos > photosData.count else { return }
+        guard collection.totalPhotos > collectionPhotos.count else { return }
 
-        let startIndex = photosData.count
+        let startIndex = collectionPhotos.count
 
         Task {
             do {
-                let photosData = try await FetchPhotos<Photo>().fetchPhotos(with: collection.photosURL, page: pageNumber)
-                self.photosData.append(contentsOf: photosData)
+                let request = URLRequest.UnsplashAPI.collectionsPhoto(id: collection.id, page: page)
+                let photos = try await requestController.fetch(from: request)
+                self.collectionPhotos.append(contentsOf: photos)
             } catch {
                 print(error)
             }
-            let itemRange = Array(startIndex...photosData.count - 1)
+            let itemRange = Array(startIndex...collectionPhotos.count - 1)
             let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
             collectionView.insertItems(at: insertedIndexRange)
         }

@@ -34,23 +34,17 @@ struct SearchRequest<ItemType: Codable> {
     }
 }
 
-struct UserMediaRequest<ItemType: Codable> {
-    private func decodeResponse(data: Data) throws -> [ItemType] {
-        let searchResults = try JSONDecoder().decode([ItemType].self, from: data)
-        return searchResults
-    }
-
-    func send(with urlRequest: URLRequest) async throws -> [ItemType] {
-
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+class UnsplashNetwork<ItemType: Codable> {
+    func fetch(from request: URLRequest) async throws -> ItemType {
+        let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkErrors.searchDataNotFound
         }
 
-        let searchData = try decodeResponse(data: data)
+        let searchResults = try JSONDecoder().decode(ItemType.self, from: data)
 
-        return searchData
+        return searchResults
     }
 }
 

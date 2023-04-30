@@ -13,7 +13,8 @@ class PhotoVC: UIViewController {
     private lazy var photoView: PhotoView = .init()
 
     var photo: Photo
-    
+    var requestController = UnsplashNetwork<Photo>()
+
     init(photo: Photo) {
         self.photo = photo
         super.init(nibName: nil, bundle: nil)
@@ -30,10 +31,11 @@ class PhotoVC: UIViewController {
     }
 
     func update() {
+        photoView.configuration = .init(photo: self.photo)
 
         Task {
-            photoView.configuration = .init(photo: self.photo)
-            self.photo = try await PhotoDataRequest().fetchPhotoData(photoId: photo.id)
+            let request = URLRequest.UnsplashAPI.singlePhoto(id: photo.id)
+            self.photo = try await requestController.fetch(from: request)
         }
     }
 }
@@ -46,7 +48,6 @@ private extension PhotoVC {
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
-
         navigationItem.standardAppearance = appearance
 
         photoView.snp.makeConstraints { make in
@@ -54,9 +55,8 @@ private extension PhotoVC {
         }
 
         photoView.infoButtonEvent = {
-            let detailVC = PhotoDetailVC(location: self.photo.location!)
+            let detailVC = PhotoDetailVC(location: self.photo.location)
             self.present(UINavigationController(rootViewController: detailVC), animated: true)
         }
-
     }
 }

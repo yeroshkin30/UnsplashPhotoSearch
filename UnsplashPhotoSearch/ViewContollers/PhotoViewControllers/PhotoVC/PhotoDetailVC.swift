@@ -8,10 +8,10 @@
 import UIKit
 
 class PhotoDetailVC: UIViewController {
-    lazy var photoDetailView = PhotoDetailView(location: location)
-    let location: Location
+    lazy var photoDetailView = PhotoDetailView()
+    let location: Location?
     
-    init(location: Location) {
+    init(location: Location?) {
         self.location = location
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,9 +38,12 @@ private extension PhotoDetailVC {
             animated: true
         )
         title = "Info"
-        view.addSubview(photoDetailView)
         view.backgroundColor = .gray
 
+        view.addSubview(photoDetailView)
+        if let location {
+            photoDetailView.locationSetup(location: location)
+        }
         setupConstraints()
     }
     

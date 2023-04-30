@@ -16,22 +16,21 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     let stackView: UIStackView = .init()
 
 
-    private let photosDataRequestController = DataRequestController<Photo>(category: "photos")
-    private let collectionsDataRequestController = DataRequestController<Collection>(category: "collections")
-    private let usersDataRequestController = DataRequestController<User>(category: "users")
+    private let photosController = DataRequestController<Photo>(category: Category.photos.rawValue)
+    private let collectionsController = DataRequestController<Collection>(category: Category.collections.rawValue)
+    private let usersController = DataRequestController<User>(category: Category.users.rawValue)
 
-    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosDataRequestController )
-    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsDataRequestController)
-    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersDataRequestController)
+    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosController )
+    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsController)
+    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersController)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        changeSearchWord()
     }
 
     func changeSearchWord() {
-        let word = "panda"
+        let word = searchController.searchBar.text ?? ""
 
         photosSearchVC.searchWordDidChange(word)
         collectionsSearchVC.searchWordDidChange(word)
@@ -125,6 +124,12 @@ private extension SearchVC {
             make.width.equalTo(view.safeAreaLayoutGuide.snp.width)
         }
     }
+}
 
-
+extension SearchVC {
+    enum Category: String {
+        case photos
+        case collections
+        case users
+    }
 }

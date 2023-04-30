@@ -59,9 +59,11 @@ extension PhotosSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
             } catch {
                 print(error)
             }
-            let itemRange = Array(startIndex...self.searchData.count - 1)
-            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexRange)
+            if searchData.count > startIndex {
+                let itemRange = Array(startIndex...self.searchData.count - 1)
+                let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexRange)
+            }
         }
     }
 }

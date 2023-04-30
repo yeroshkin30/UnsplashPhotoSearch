@@ -24,7 +24,6 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
     }
 
     func fetchFirstPage() {
-        searchData = []
         searchTask?.cancel()
         searchTask = Task {
             do {
@@ -49,6 +48,9 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
 
     func searchWordDidChange(_ word: String) {
         if dataRequestController.searchWord != word {
+            searchData = []
+            collectionView.reloadData()
+            collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
             dataRequestController.searchWord = word
             fetchFirstPage()
         }
