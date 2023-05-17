@@ -65,22 +65,9 @@ extension UserCollectionsVC: UICollectionViewDataSource, UICollectionViewDelegat
         let itemsLeft = mediaData.count - indexPath.section
 
         if itemsLeft == 25 {
-            fetchNextPage()
+            loadNextPage(with: .section)
         }
     }
 
-    func fetchNextPage() {
-        let startIndex = mediaData.count
 
-        Task {
-            do {
-                let mediaData = try await userMediaController.loadNextPage()
-                self.mediaData.append(contentsOf: mediaData)
-            } catch {
-                print(error)
-            }
-            let itemRange = Array(startIndex...self.mediaData.count - 1)
-            collectionView.insertSections(IndexSet(itemRange))
-        }
-    }
 }

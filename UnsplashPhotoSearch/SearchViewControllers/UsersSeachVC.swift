@@ -47,24 +47,8 @@ extension UsersSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
         forItemAt indexPath: IndexPath
     ) {
         let itemsLeft = searchData.count - indexPath.item
-        if itemsLeft == 25 {
-            fetchNextPage()
-        }
-    }
-
-    func fetchNextPage() {
-        let startIndex = searchData.count
-
-        Task {
-            do {
-                let searchData = try await dataRequestController.loadNextPage()
-                self.searchData.append(contentsOf: searchData)
-            } catch {
-                print(error)
-            }
-            let itemRange = Array(startIndex...self.searchData.count - 1)
-            let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexRange)
+        if itemsLeft == 25, isLoadingFlag == false {
+            loadNextPage(with: .item)
         }
     }
 }

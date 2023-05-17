@@ -66,7 +66,7 @@ extension CollectionsSearchVC: UICollectionViewDataSource, UICollectionViewDeleg
         let itemsLeft = searchData.count - indexPath.section
 
         if itemsLeft == 25 {
-            fetchNextPage()
+            loadNextPage(with: .section)
         }
     }
 

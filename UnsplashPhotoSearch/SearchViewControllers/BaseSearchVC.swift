@@ -12,7 +12,7 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
     let dataRequestController: DataRequestController<ItemType>
     var searchTask: Task<Void, Never>?
     var searchData: [ItemType] = []
-
+    var isLoadingFlag = false 
 
     init (controller: DataRequestController<ItemType>) {
         self.dataRequestController = controller
@@ -54,5 +54,43 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
             dataRequestController.searchWord = word
             fetchFirstPage()
         }
+    }
+
+    func loadNextPage(with index: IndexType) {
+        let startIndex = searchData.count
+
+        isLoadingFlag = true
+
+
+        Task {
+            do {
+
+                let searchData = try await dataRequestController.loadNextPage()
+                self.searchData.append(contentsOf: searchData)
+            } catch {
+                print(error)
+            }
+
+            if searchData.count > startIndex {
+                let itemRange = Array(startIndex...self.searchData.count - 1)
+
+                switch index {
+                case .item:
+                    let insertedIndexRange = itemRange.map { IndexPath(item: $0, section: 0) }
+                    collectionView.insertItems(at: insertedIndexRange)
+                case.section:
+                    let itemRange = Array(startIndex...self.searchData.count - 1)
+                    collectionView.insertSections(IndexSet(itemRange))
+                }
+
+            }
+            
+            isLoadingFlag = false
+        }
+    }
+
+    enum IndexType {
+        case section
+        case item
     }
 }

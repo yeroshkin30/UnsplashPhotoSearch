@@ -150,7 +150,6 @@
 				186C25CE29D22B7900BEA395 /* help */,
 				7CDA5D3C29D57F2E000E5633 /* Cells */,
 				186C25D129D3107300BEA395 /* Models */,
-				7CC79E3F29DD697E0083F013 /* View */,
 				7C66AD9F29EAB16D00B1C7A6 /* SearchViewControllers */,
 				7C66ADA029EAB19400B1C7A6 /* Contollers */,
 				7CAB612F29E84D1A001891D3 /* ViewContollers */,
@@ -249,13 +248,6 @@
 				7C45F16329FC25340071E4A5 /* PhotoVC */,
 			);
 			path = PhotoViewControllers;
-			sourceTree = "<group>";
-		};
-		7CC79E3F29DD697E0083F013 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		7CDA5D3C29D57F2E000E5633 /* Cells */ = {
