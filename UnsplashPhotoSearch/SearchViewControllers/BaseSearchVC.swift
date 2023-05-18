@@ -23,6 +23,11 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.frame = view.bounds
+    }
+
     func fetchFirstPage() {
         searchTask?.cancel()
         searchTask = Task {
@@ -43,7 +48,6 @@ class BaseSearchVC<ItemType: Codable>: UIViewController {
 
     func setup() {
         view.addSubview(collectionView)
-        collectionView.frame = view.bounds
     }
 
     func searchWordDidChange(_ word: String) {

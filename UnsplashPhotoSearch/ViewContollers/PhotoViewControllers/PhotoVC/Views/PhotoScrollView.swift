@@ -9,6 +9,8 @@ import UIKit
 
 class PhotoScrollView: UIScrollView {
     private let imageView: UIImageView = .init()
+    private let tapGesture: UITapGestureRecognizer = .init()
+
     var image: UIImage? {
         get {
             imageView.image
@@ -19,6 +21,7 @@ class PhotoScrollView: UIScrollView {
             updateMinZoomForScale(size: self.bounds.size)
         }
     }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -36,6 +39,7 @@ class PhotoScrollView: UIScrollView {
         imageView.contentMode = .scaleAspectFit
         imageView.frame = bounds
         setupContentInset()
+        setupGesture()
     }
 
     private func updateMinZoomForScale(size: CGSize) {
@@ -55,6 +59,34 @@ class PhotoScrollView: UIScrollView {
         vInset = vInset > 0 ? vInset : 0
 
         contentInset = UIEdgeInsets(top: vInset, left: hInset, bottom: vInset, right: hInset)
+    }
+}
+
+extension PhotoScrollView {
+    func setupGesture() {
+        addGestureRecognizer(tapGesture)
+        isUserInteractionEnabled = true
+
+        tapGesture.numberOfTapsRequired = 2
+        tapGesture.addTarget(self, action: #selector(doubleTap))
+    }
+
+    @objc func  doubleTap(_ sender: UIGestureRecognizer) {
+        if zoomScale != minimumZoomScale {
+            setZoomScale(minimumZoomScale, animated: true)
+        } else {
+            zoomToRect(at: sender.location(in: imageView))
+        }
+
+    }
+
+    func zoomToRect(at location: CGPoint) {
+        let xOrigin = location.x - (bounds.width / 2)
+        let yOrigin = location.y - (bounds.height / 2)
+
+        let zoomRect = CGRect(x: xOrigin, y: yOrigin, width: bounds.width, height: bounds.height)
+
+        zoom(to: zoomRect, animated: true)
     }
 }
 

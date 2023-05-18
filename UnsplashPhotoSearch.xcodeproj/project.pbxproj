@@ -233,10 +233,10 @@
 			children = (
 				7C45F16429FC25820071E4A5 /* Views */,
 				7CC79E3B29DC8C550083F013 /* UserVC.swift */,
-				7C957A9C29EF37C400ACBDC0 /* UserMediaVC.swift */,
 				7CC06E5129EFE1A500E39F69 /* UserCollecitonsVC.swift */,
 				7C957A9E29EF39FA00ACBDC0 /* UserPhotosVC.swift */,
 				7CC06E4F29EFE13900E39F69 /* UserLikesVC.swift */,
+				7C957A9C29EF37C400ACBDC0 /* UserMediaVC.swift */,
 			);
 			path = UserViewControllers;
 			sourceTree = "<group>";

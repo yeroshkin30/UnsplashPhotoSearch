@@ -27,10 +27,11 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        changeSearchWord()
     }
 
     func changeSearchWord() {
-        let word = searchController.searchBar.text ?? ""
+        let word = "panda"
 
         photosSearchVC.searchWordDidChange(word)
         collectionsSearchVC.searchWordDidChange(word)
