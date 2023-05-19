@@ -47,4 +47,19 @@ class UnsplashNetwork<ItemType: Codable> {
         return searchResults
     }
 }
-
+struct TokenNetwork {
+    func fetchToken(from request: URLRequest) async throws -> String? {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NetworkErrors.searchDataNotFound
+        }
+        
+        guard let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any],
+              let accessToken = json[UnsplashParameterName.Authentication.accessToken] as? String else {
+            return nil
+        }
+        
+        return accessToken
+    }
+}

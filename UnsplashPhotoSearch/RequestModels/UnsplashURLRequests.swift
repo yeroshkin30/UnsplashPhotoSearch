@@ -59,5 +59,24 @@ extension URLRequest {
         static func singlePhoto(id photoID: String) -> URLRequest {
             URLRequest.unsplash(path: "/photos/\(photoID)")
         }
+
+        static func userToken(with code: String) -> URLRequest {
+            let itemsDictionary = [
+                UnsplashParameterName.Authentication.clientID:      UnsplashAPI.clientID,
+                UnsplashParameterName.Authentication.clientSecret:  UnsplashAPI.clientSecret,
+                UnsplashParameterName.Authentication.redirectURI:   UnsplashAPI.callbackUrlScheme,
+                UnsplashParameterName.Authentication.code:          code,
+                UnsplashParameterName.Authentication.grantType:     UnsplashParameterName.Authentication.authorizationCode
+            ]
+
+            var components = URLComponents(string: "https://unsplash.com")!
+            components.path = "/oauth/token"
+            components.queryItems = itemsDictionary.map { URLQueryItem(name: $0.key, value: $0.value) }
+
+            var request = URLRequest(url: components.url!)
+            request.httpMethod = "POST"
+
+            return request
+        }
     }
 }

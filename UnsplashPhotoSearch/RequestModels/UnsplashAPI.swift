@@ -8,9 +8,8 @@
 import Foundation
 
 enum UnsplashAPI {
-
     static let accessTokenKey = "accessTokenKey"
-    static let callbackUrlScheme = "unsplashPhoto"
+    static let callbackUrlScheme = "unsplashPhoto://authorization"
     static let clientID = "ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY"
     static let clientSecret = "PuzzV74r4Uk5wgNkmmFu27i56VAjOCTaDAGjocNSGvc"
 

@@ -17,8 +17,8 @@ class UnsplashTabBarController: UITabBarController {
         return vc
     }()
 
-    let authorizationVC: ProfileTabVC = {
-        let vc = ProfileTabVC()
+    let authorizationVC: AuthorizationVC = {
+        let vc = AuthorizationVC()
         let sys = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
         vc.tabBarItem = sys
 

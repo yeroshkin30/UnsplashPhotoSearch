@@ -6,39 +6,39 @@
 //
 
 import UIKit
-import AuthenticationServices
+import SnapKit
+import WebKit
 
+final class AuthorizationVC: UIViewController {
 
-class AuthorizationVC: UIViewController {
-    let authURL = UnsplashAPI.logInURL
-    let scheme = UnsplashAPI.callbackUrlScheme
-
-    let session = ASWebAuthenticationSession(
-        url: UnsplashAPI.logInURL,
-        callbackURLScheme: UnsplashAPI.callbackUrlScheme,
-        completionHandler: { callbackURL, error in print(callbackURL) }
-        )
+    let logInButton: UIButton = .init(configuration: .filled())
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        session.start()
+}
 
-    }
-
+private extension AuthorizationVC {
     func setup() {
         view.backgroundColor = .white
+        view.addSubview(logInButton)
 
-        session.presentationContextProvider = self
+
+        logInButton.configuration?.title = "Log In"
+        logInButton.configuration?.buttonSize = .large
+        logInButton.addTarget(self, action: #selector(startAuthorization), for: .touchUpInside)
+
+        logInButton.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(200)
+        }
+    }
+
+    @objc func startAuthorization() {
+
     }
 }
 
-extension AuthorizationVC: ASWebAuthenticationPresentationContextProviding {
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        return view.window!
-    }
-}
+
+
