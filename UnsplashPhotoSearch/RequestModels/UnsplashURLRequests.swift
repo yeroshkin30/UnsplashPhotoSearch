@@ -33,14 +33,14 @@ extension URLRequest {
         components.queryItems = queryItems
 
         var urlRequest = URLRequest(url: components.url!)
-        urlRequest.setValue("Client-ID \(ClientIDs.first.rawValue)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("Client-ID \(UnsplashAPI.clientID)", forHTTPHeaderField: "Authorization")
 
         return urlRequest
     }
 }
 
 extension URLRequest {
-    enum UnsplashAPI {
+    enum Unsplash {
         static func search(category: String, word: String,page: Int) -> URLRequest {
             URLRequest.unsplash(path: "/search/\(category)",
                                 queryItems: .unsplashQuery(word: word, page: page))

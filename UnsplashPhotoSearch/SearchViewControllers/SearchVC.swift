@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-final class SearchVC: UIViewController, UISearchBarDelegate {
+class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
     private let pagingScrollView: UIScrollView = .init()
     let stackView: UIStackView = .init()
@@ -112,8 +112,8 @@ private extension SearchVC {
 
     func setupConstraints() {
         pagingScrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(view.snp.bottom)
+            make.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+
         }
 
         stackView.snp.makeConstraints { make in

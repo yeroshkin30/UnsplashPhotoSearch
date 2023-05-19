@@ -22,7 +22,7 @@ class UserMediaController<FetchedItem: Codable> {
     //actor
     func loadNextPage() async throws -> [FetchedItem] {
         page += 1
-        let urlRequest = URLRequest.UnsplashAPI.userMedia(username: username, mediaType: mediaType, page: page)
+        let urlRequest = URLRequest.Unsplash.userMedia(username: username, mediaType: mediaType, page: page)
         let searchItems = try await UnsplashNetwork<[FetchedItem]>().fetch(from: urlRequest)
 
         return searchItems

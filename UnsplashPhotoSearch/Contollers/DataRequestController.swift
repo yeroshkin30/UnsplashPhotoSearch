@@ -24,7 +24,7 @@ class DataRequestController<SearchItem: Codable> {
     //actor
     func loadNextPage() async throws -> [SearchItem] {
         currentPage += 1
-        let urlRequest = URLRequest.UnsplashAPI.search(category: category, word: searchWord!, page: currentPage)
+        let urlRequest = URLRequest.Unsplash.search(category: category, word: searchWord!, page: currentPage)
 
         let searchItems = try await SearchRequest<SearchItem>().sendRequest(with: urlRequest)
         self.searchItems = searchItems

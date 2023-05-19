@@ -34,7 +34,7 @@ class CollectionVC: UIViewController {
     func fetchFirstPage() {
         photoRequestTask = Task {
             do {
-                let request = URLRequest.UnsplashAPI.collectionsPhoto(id: collection.id, page: page)
+                let request = URLRequest.Unsplash.collectionsPhoto(id: collection.id, page: page)
                 self.collectionPhotos = try await requestController.fetch(from: request)
             } catch {
                 print(error)
@@ -92,7 +92,7 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
         Task {
             do {
-                let request = URLRequest.UnsplashAPI.collectionsPhoto(id: collection.id, page: page)
+                let request = URLRequest.Unsplash.collectionsPhoto(id: collection.id, page: page)
                 let photos = try await requestController.fetch(from: request)
                 self.collectionPhotos.append(contentsOf: photos)
             } catch {

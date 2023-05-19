@@ -26,6 +26,7 @@ class PhotoVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        hidesBottomBarWhenPushed = true
         setupUI()
         update()
     }
@@ -34,7 +35,7 @@ class PhotoVC: UIViewController {
         photoView.configuration = .init(photo: self.photo)
 
         Task {
-            let request = URLRequest.UnsplashAPI.singlePhoto(id: photo.id)
+            let request = URLRequest.Unsplash.singlePhoto(id: photo.id)
             self.photo = try await requestController.fetch(from: request)
         }
     }
