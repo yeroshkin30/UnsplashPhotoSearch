@@ -30,7 +30,6 @@ extension URLRequest {
         var urlRequest = URLRequest(url: components.url!)
         urlRequest.allHTTPHeaderFields = ["Authorization": "Client-ID \(UnsplashAPI.clientID)"]
         if let token = UserDefaults.standard.string(forKey: UnsplashAPI.accessTokenKey) {
-            print("asdf")
             urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(token)"]
         }
 
@@ -76,6 +75,10 @@ extension URLRequest {
             request.httpMethod = "POST"
 
             return request
+        }
+
+        static func userProfile() -> URLRequest {
+            URLRequest.unsplash(path: "/me")
         }
     }
 }

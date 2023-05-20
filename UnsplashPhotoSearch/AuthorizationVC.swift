@@ -10,16 +10,36 @@ import SnapKit
 
 final class AuthorizationVC: UIViewController {
     private let logInButton: UIButton = .init(configuration: .filled())
-    private var authorizationController: AuthorizationController = .init()
 
+    private var authorizationController: AuthorizationController = .init()
+    private var profileVC: UserVC?
+
+    var user: User?
+    var state: AuthorizationState = .unauthorised {
+        didSet{
+
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        authorizationSetup()
+    }
+
+    @objc func startAuthorization() {
+
+        Task {
+            let user = try? await authorizationController.getUser()
+print(user)
+        }
+    }
+
+    private func presentProfile(with: User) {
+        show(profileVC!, sender: nil)
     }
 }
 
 private extension AuthorizationVC {
-    func setup() {
+    func authorizationSetup() {
         view.backgroundColor = .white
         view.addSubview(logInButton)
 
@@ -32,12 +52,10 @@ private extension AuthorizationVC {
             make.width.equalTo(200)
         }
     }
-
-    @objc func startAuthorization() {
-        authorizationController.requestAuthorizationCode()
-    }
 }
 
-
-
-
+enum AuthorizationState {
+    case authorised
+    case unauthorised
+    case authorising
+}

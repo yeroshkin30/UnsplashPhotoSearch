@@ -74,14 +74,11 @@ private extension UserVC {
         setupConstraints()
     }
 
-
-
     func segmentControlSetup() {
         mediaSegmentedControl.insertSegment(withTitle: "Photos", at: 0, animated: false)
         mediaSegmentedControl.insertSegment(withTitle: "Likes", at: 1, animated: false)
         mediaSegmentedControl.insertSegment(withTitle: "Collections", at: 2, animated: false)
         mediaSegmentedControl.selectedSegmentIndex = 0
-
         mediaSegmentedControl.addTarget(self, action: #selector(segmentDidChange), for: .valueChanged)
     }
 
@@ -106,7 +103,6 @@ private extension UserVC {
 
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-
     }
 
     func setupConstraints() {
@@ -142,6 +138,5 @@ extension UserVC {
         case photos
         case likes
         case collections
-
     }
 }
