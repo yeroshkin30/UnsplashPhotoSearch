@@ -7,11 +7,6 @@
 
 import Foundation
 
-enum ClientIDs: String {
-    case first = "-5QqBcdp57go7e7fuy9Kb5jqmw9V6kY3JfYa7cRO5dU"
-    case second = "ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY"
-}
-
 extension Array where Element == URLQueryItem {
     static func unsplashQuery(word: String? = nil, page: Int) -> [URLQueryItem] {
         var queryItems = [URLQueryItem(name: "page", value: "\(page)"),
@@ -33,7 +28,11 @@ extension URLRequest {
         components.queryItems = queryItems
 
         var urlRequest = URLRequest(url: components.url!)
-        urlRequest.setValue("Client-ID \(UnsplashAPI.clientID)", forHTTPHeaderField: "Authorization")
+        urlRequest.allHTTPHeaderFields = ["Authorization": "Client-ID \(UnsplashAPI.clientID)"]
+        if let token = UserDefaults.standard.string(forKey: UnsplashAPI.accessTokenKey) {
+            print("asdf")
+            urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(token)"]
+        }
 
         return urlRequest
     }

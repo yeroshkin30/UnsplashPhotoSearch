@@ -26,6 +26,7 @@ class UnsplashTabBarController: UITabBarController {
     }()
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
         viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: authorizationVC)]
     }
 }

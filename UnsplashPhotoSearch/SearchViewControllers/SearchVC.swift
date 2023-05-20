@@ -10,11 +10,10 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class SearchVC: UIViewController, UISearchBarDelegate {
+final class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
     private let pagingScrollView: UIScrollView = .init()
-    let stackView: UIStackView = .init()
-
+    private let stackView: UIStackView = .init()
 
     private let photosController = DataRequestController<Photo>(category: Category.photos.rawValue)
     private let collectionsController = DataRequestController<Collection>(category: Category.collections.rawValue)
@@ -46,6 +45,7 @@ class SearchVC: UIViewController, UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         changeSearchWord()
         let width = view.frame.width
+
         switch selectedScope {
         case 0:
             pagingScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
@@ -107,7 +107,6 @@ private extension SearchVC {
 
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-
     }
 
     func setupConstraints() {

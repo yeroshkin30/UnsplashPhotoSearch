@@ -9,30 +9,19 @@ import UIKit
 import AuthenticationServices
 
 
-class AuthorizationController: UIViewController {
-
+class AuthorizationController: NSObject {
     private var session: ASWebAuthenticationSession?
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        requestAuthorizationCode()
-
-    }
-
-    private func requestAuthorizationCode() {
+    func requestAuthorizationCode() {
         let handler: ASWebAuthenticationSession.CompletionHandler = { successURL, error in
-            if let successURL {
-                let queryItems = URLComponents(string: successURL.absoluteString)?.queryItems
+            guard let successURL else { return }
 
-                if let code = queryItems?.filter({$0.name == "code"}).first?.value {
-                    self.requestAccessToken(with: code)
-                } else {
-                    print(error?.localizedDescription ?? "Error with Auth")}
+            let queryItems = URLComponents(string: successURL.absoluteString)?.queryItems
+
+            if let code = queryItems?.filter({$0.name == "code"}).first?.value {
+                self.requestAccessToken(with: code)
+            } else {
+                print(error?.localizedDescription ?? "Error with Auth")
             }
         }
 
@@ -44,7 +33,6 @@ class AuthorizationController: UIViewController {
         session?.presentationContextProvider = self
 
         session?.start()
-
     }
 
     func requestAccessToken(with code: String) {
@@ -53,7 +41,7 @@ class AuthorizationController: UIViewController {
         Task {
             do {
                 let token = try await TokenNetwork().fetchToken(from: request)
-                print(token)
+                UserDefaults.standard.set(token, forKey: UnsplashAPI.accessTokenKey)
             } catch {
                 print(error)
             }
@@ -61,8 +49,8 @@ class AuthorizationController: UIViewController {
     }
 }
 
-extension AuthorizationVC: ASWebAuthenticationPresentationContextProviding {
+extension AuthorizationController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        return view.window!
+        ASPresentationAnchor()
     }
 }

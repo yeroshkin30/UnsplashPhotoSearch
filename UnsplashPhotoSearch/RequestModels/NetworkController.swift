@@ -46,7 +46,9 @@ class UnsplashNetwork<ItemType: Codable> {
 
         return searchResults
     }
+
 }
+
 struct TokenNetwork {
     func fetchToken(from request: URLRequest) async throws -> String? {
         let (data, response) = try await URLSession.shared.data(for: request)

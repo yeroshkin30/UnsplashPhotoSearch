@@ -7,11 +7,10 @@
 
 import UIKit
 import SnapKit
-import WebKit
 
 final class AuthorizationVC: UIViewController {
-
-    let logInButton: UIButton = .init(configuration: .filled())
+    private let logInButton: UIButton = .init(configuration: .filled())
+    private var authorizationController: AuthorizationController = .init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +23,6 @@ private extension AuthorizationVC {
         view.backgroundColor = .white
         view.addSubview(logInButton)
 
-
         logInButton.configuration?.title = "Log In"
         logInButton.configuration?.buttonSize = .large
         logInButton.addTarget(self, action: #selector(startAuthorization), for: .touchUpInside)
@@ -36,9 +34,10 @@ private extension AuthorizationVC {
     }
 
     @objc func startAuthorization() {
-
+        authorizationController.requestAuthorizationCode()
     }
 }
+
 
 
 
