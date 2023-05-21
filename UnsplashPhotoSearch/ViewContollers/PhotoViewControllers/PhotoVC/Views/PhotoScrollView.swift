@@ -10,15 +10,11 @@ import UIKit
 class PhotoScrollView: UIScrollView {
     private let imageView: UIImageView = .init()
     private let tapGesture: UITapGestureRecognizer = .init()
-
+    private var viewIsSet = false
     var image: UIImage? {
-        get {
-            imageView.image
-        }
-        set {
-            imageView.image = newValue
+        didSet {
+            imageView.image = image
             imageView.sizeToFit()
-            updateMinZoomForScale(size: self.bounds.size)
         }
     }
 
@@ -29,6 +25,13 @@ class PhotoScrollView: UIScrollView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        if image != nil, viewIsSet == false {
+            updateMinZoomForScale(size: self.bounds.size)
+            viewIsSet = true
+        }
     }
 
     private func setup() {
@@ -91,7 +94,6 @@ extension PhotoScrollView {
 }
 
 extension PhotoScrollView: UIScrollViewDelegate {
-
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView
     }

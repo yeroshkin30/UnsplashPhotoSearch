@@ -8,31 +8,37 @@
 import UIKit
 import AuthenticationServices
 
-
-class AuthorizationController: NSObject {
+@MainActor
+final class AuthorizationController: NSObject {
     private var session: ASWebAuthenticationSession?
 
 
-    func getUser() async throws -> User {
-        let code: String =  await  withUnsafeContinuation({ continuation in
+    func authorization() async throws -> User {
+        var code: String = try await withUnsafeThrowingContinuation({ continuation in
             requestAuthorizationCode { code in
-                continuation.resume(returning: code)
+                switch code {
+                case .success(let codes):
+                    continuation.resume(returning: codes)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         })
         let user = try await requestAccessToken(with: code)
         
         return user
     }
-    func requestAuthorizationCode(handler: @escaping (String) -> Void) {
+
+    func requestAuthorizationCode(handler: @escaping (Result<String, Error>) -> Void) {
         let handler: ASWebAuthenticationSession.CompletionHandler = { successURL, error in
             guard let successURL else { return }
 
             let queryItems = URLComponents(string: successURL.absoluteString)?.queryItems
 
             if let code = queryItems?.filter({$0.name == "code"}).first?.value {
-                handler(code)
+                handler(.success(code))
             } else {
-                print(error?.localizedDescription ?? "Error with Auth")
+                handler(.failure(error!))
             }
         }
 

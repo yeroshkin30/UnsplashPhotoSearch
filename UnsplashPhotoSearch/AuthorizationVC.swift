@@ -22,14 +22,20 @@ final class AuthorizationVC: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        authorizationSetup()
+        setup()
     }
 
     @objc func startAuthorization() {
 
         Task {
-            let user = try? await authorizationController.getUser()
-print(user)
+            do {
+                let user = try await authorizationController.authorization()
+                profileVC = .init(user: user)
+                profileVC?.modalPresentationStyle = .fullScreen
+                present(profileVC!, animated: true)
+            } catch {
+                print(error)
+            }
         }
     }
 
@@ -39,7 +45,7 @@ print(user)
 }
 
 private extension AuthorizationVC {
-    func authorizationSetup() {
+    func setup() {
         view.backgroundColor = .white
         view.addSubview(logInButton)
 
@@ -47,6 +53,10 @@ private extension AuthorizationVC {
         logInButton.configuration?.buttonSize = .large
         logInButton.addTarget(self, action: #selector(startAuthorization), for: .touchUpInside)
 
+        setupConstraints()
+    }
+
+    func setupConstraints() {
         logInButton.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.equalTo(200)
