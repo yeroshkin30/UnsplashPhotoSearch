@@ -50,6 +50,7 @@ final class AuthorizationController: NSObject {
         let request = URLRequest.Unsplash.userToken(with: code)
         let token = try await UnsplashNetwork<Token>().fetch(from: request)
         UserDefaults.standard.set(token.access_token, forKey: UnsplashAPI.accessTokenKey)
+        UserDefaults.standard.set(true, forKey: "User")
 
         let newRequest = URLRequest.Unsplash.userProfile()
         let user = try await UnsplashNetwork<User>().fetch(from: newRequest)

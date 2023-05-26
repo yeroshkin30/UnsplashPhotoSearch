@@ -26,7 +26,7 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        changeSearchWord()
+//        changeSearchWord()
     }
 
     func changeSearchWord() {

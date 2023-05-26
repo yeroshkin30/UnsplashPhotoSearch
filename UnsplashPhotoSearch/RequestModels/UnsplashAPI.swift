@@ -7,11 +7,19 @@
 
 import Foundation
 
+enum CliendId: String {
+    case first = "ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY"
+    case second = "-5QqBcdp57go7e7fuy9Kb5jqmw9V6kY3JfYa7cRO5dU"
+    case firstSectet = "PuzzV74r4Uk5wgNkmmFu27i56VAjOCTaDAGjocNSGvc"
+    case secondSecret = "uvOCVzZwN_9wtP2_67HlO_ncrARCQKJ6z0A8tvOF6QA"
+}
+
+
 enum UnsplashAPI {
     static let accessTokenKey = "accessTokenKey"
     static let callbackUrlScheme = "unsplashPhoto://authorization"
-    static let clientID = "ZmifjFVuI-ybPzVC0bjS5fVfOxX8q8KHH813yxMKkhY"
-    static let clientSecret = "PuzzV74r4Uk5wgNkmmFu27i56VAjOCTaDAGjocNSGvc"
+    static let clientID = CliendId.first.rawValue
+    static let clientSecret = CliendId.first.rawValue
 
     static let logOutURL = URL(string: "https://unsplash.com/logout")!
 

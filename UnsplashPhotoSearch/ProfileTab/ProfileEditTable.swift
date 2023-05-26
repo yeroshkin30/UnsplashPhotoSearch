@@ -11,7 +11,6 @@ import UIKit
 class EditProfileTableView: UITableView{
     let user: User?
 
-
     let fields = [
         "First Name",
         "Last Name",
@@ -22,7 +21,7 @@ class EditProfileTableView: UITableView{
 
     init(user: User?) {
         self.user = user
-        super.init(frame: .zero, style: .grouped)
+        super.init(frame: .zero, style: .insetGrouped)
         setup()
     }
 
@@ -33,7 +32,8 @@ class EditProfileTableView: UITableView{
     private func setup() {
         register(EditProfileTVCell.self, forCellReuseIdentifier: EditProfileTVCell.identifier)
         dataSource = self
-
+        isScrollEnabled = false
+        backgroundColor = .Unsplash.dark2
     }
 }
 
@@ -49,4 +49,7 @@ extension EditProfileTableView: UITableViewDataSource {
         return cell
     }
 
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        "Profile"
+    }
 }

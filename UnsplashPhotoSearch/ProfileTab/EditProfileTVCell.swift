@@ -15,12 +15,16 @@ class EditProfileTVCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubview(textField)
+        contentView.addSubview(textField)
+        contentView.backgroundColor = .systemGray4
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        textField.frame = contentView.frame
+        textField.snp.makeConstraints { make in
+            make.top.bottom.equalTo(contentView)
+            make.leading.trailing.equalTo(contentView).offset(20)
+        }
     }
 
     required init?(coder: NSCoder) {
