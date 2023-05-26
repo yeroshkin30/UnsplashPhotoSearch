@@ -11,7 +11,7 @@ import SnapKit
 
 class PhotoView: UIView {
     private let likesView: LikesView = .init()
-    private let scrollView: PhotoScrollView = .init()
+    private lazy var scrollView: PhotoScrollView = .init(frame: bounds)
     private let infoButton: UIButton = .init()
 
     var configuration: Configuration? {
@@ -79,7 +79,6 @@ extension PhotoView {
 }
 
 private extension PhotoView {
-
     func configurationDidChange(oldValue: Configuration?) {
         guard let configuration else { return }
 

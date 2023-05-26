@@ -1,9 +1,4 @@
-//
-//  AuthorizationVC.swift
-//  UnsplashPhotoSearch
-//
-//  Created by Oleg  on 18.05.2023.
-//
+
 
 import UIKit
 import AuthenticationServices
@@ -12,9 +7,8 @@ import AuthenticationServices
 final class AuthorizationController: NSObject {
     private var session: ASWebAuthenticationSession?
 
-
     func authorization() async throws -> User {
-        var code: String = try await withUnsafeThrowingContinuation({ continuation in
+        let code: String = try await withUnsafeThrowingContinuation({ continuation in
             requestAuthorizationCode { code in
                 switch code {
                 case .success(let codes):

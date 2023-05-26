@@ -15,6 +15,7 @@ class PhotoScrollView: UIScrollView {
         didSet {
             imageView.image = image
             imageView.sizeToFit()
+            updateMinZoomForScale(size: self.bounds.size)
         }
     }
 

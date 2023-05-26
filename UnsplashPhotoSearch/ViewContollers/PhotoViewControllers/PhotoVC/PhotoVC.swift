@@ -10,7 +10,7 @@ import SnapKit
 
 
 class PhotoVC: UIViewController {
-    private lazy var photoView: PhotoView = .init()
+    private lazy var photoView: PhotoView = .init(frame: view.bounds)
 
     var photo: Photo
     var requestController = UnsplashNetwork<Photo>()
@@ -23,7 +23,7 @@ class PhotoVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         hidesBottomBarWhenPushed = true

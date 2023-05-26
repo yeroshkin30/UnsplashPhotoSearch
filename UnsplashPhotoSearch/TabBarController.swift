@@ -17,8 +17,8 @@ class UnsplashTabBarController: UITabBarController {
         return vc
     }()
 
-    let authorizationVC: AuthorizationVC = {
-        let vc = AuthorizationVC()
+    let profileTabVC: ProfileTabVC = {
+        let vc = ProfileTabVC()
         let sys = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
         vc.tabBarItem = sys
 
@@ -27,6 +27,6 @@ class UnsplashTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
-        viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: authorizationVC)]
+        viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: ProfileEditVC())]
     }
 }
