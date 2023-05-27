@@ -15,12 +15,12 @@ final class ProfileTabVC: UIViewController {
     private var profileVC: UserVC!
 
     private var user: User!
-    private let isAutorized = UserDefaults.standard.bool(forKey: "User")
+    private let isAuthorized = UserDefaults.standard.bool(forKey: "User")
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        if isAutorized {
+        if isAuthorized {
             logIn()
         }
     }
@@ -81,8 +81,8 @@ final class ProfileTabVC: UIViewController {
     }
 
     private func editActionTapped() {
-//        let editProfileVC = UINavigationController(rootViewController: EditProfileVC(user: user))
-//        present(editProfileVC, animated: true)
+        let editProfileVC = UINavigationController(rootViewController: EditProfileVC(user: user))
+        present(editProfileVC, animated: true)
     }
 
     private func logOutActionTapped() {

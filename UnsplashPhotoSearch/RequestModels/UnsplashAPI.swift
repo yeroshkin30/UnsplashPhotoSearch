@@ -18,8 +18,8 @@ enum CliendId: String {
 enum UnsplashAPI {
     static let accessTokenKey = "accessTokenKey"
     static let callbackUrlScheme = "unsplashPhoto://authorization"
-    static let clientID = CliendId.first.rawValue
-    static let clientSecret = CliendId.first.rawValue
+    static let clientID = CliendId.second.rawValue
+    static let clientSecret = CliendId.secondSecret.rawValue
 
     static let logOutURL = URL(string: "https://unsplash.com/logout")!
 

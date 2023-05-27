@@ -11,12 +11,14 @@ struct User: Codable {
     let id: String
     let username: String
     let name: String
+    let firstName: String?
+    let lastName: String?
+    let biography: String?
     let location: String?
     let totalPhotos: Int
     let totalLikes: Int
     let totalCollections: Int
     let imageURL: URL
-    let links: UserLinks
 
 
     enum CustomKeys: String, CodingKey {
@@ -24,11 +26,13 @@ struct User: Codable {
         case username
         case name
         case location
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case biography = "bio"
         case totalPhotos = "total_photos"
         case totalLikes = "total_likes"
         case totalCollections = "total_collections"
         case profileImageURL = "profile_image"
-        case links
     }
 
     enum ProfileImageKey: String, CodingKey {
@@ -41,19 +45,15 @@ struct User: Codable {
         id = try values.decode(String.self, forKey: .id)
         username = try values.decode(String.self, forKey: .username)
         name = try values.decode(String.self, forKey: .name)
+        firstName = try? values.decode(String.self, forKey: .firstName)
+        lastName = try? values.decode(String.self, forKey: .lastName)
+        biography = try? values.decode(String.self, forKey: .biography)
         location = try? values.decode(String.self, forKey: .location)
         totalPhotos = try values.decode(Int.self, forKey: .totalPhotos)
         totalLikes = try values.decode(Int.self, forKey: .totalLikes)
         totalCollections = try values.decode(Int.self, forKey: .totalCollections)
-        links = try values.decode(UserLinks.self, forKey: .links)
 
         let profileImageURLs = try values.nestedContainer(keyedBy: ProfileImageKey.self, forKey: .profileImageURL)
         imageURL = try profileImageURLs.decode(URL.self, forKey: .large)
     }
-}
-
-struct UserLinks: Codable {
-    let photos: URL
-    let likes: URL
-    let followers: URL
 }

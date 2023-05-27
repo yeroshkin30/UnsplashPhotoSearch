@@ -11,7 +11,7 @@ import SnapKit
 class EditProfileTVCell: UITableViewCell {
     static let identifier = "EditProfileTVCell"
 
-    private let textField: UITextField = .init()
+    let textField: UITextField = .init()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -31,7 +31,8 @@ class EditProfileTVCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configuration(holder: String) {
+    func configuration(holder: String, text: String?) {
         textField.placeholder = holder
+        textField.text = text
     }
 }

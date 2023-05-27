@@ -26,7 +26,8 @@ class UnsplashTabBarController: UITabBarController {
     }()
     override func viewDidLoad() {
         super.viewDidLoad()
-        UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
-        viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: ProfileEditVC())]
+        viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
+
+        tabBar.backgroundColor = .Unsplash.dark3
     }
 }

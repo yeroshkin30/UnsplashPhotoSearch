@@ -18,6 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: sceneWindow)
         window.rootViewController = UnsplashTabBarController()
         window.makeKeyAndVisible()
+        UserDefaults.standard.removeObject(forKey: "User")
+        UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
         self.window = window
     }
 

@@ -52,8 +52,6 @@
 		7CC79E4B29E188CE0083F013 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC79E4A29E188CE0083F013 /* UserController.swift */; };
 		7CC79E4D29E2AB920083F013 /* PhotoScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC79E4C29E2AB920083F013 /* PhotoScrollView.swift */; };
 		7CCA2B4A2A1F7BB300023EDC /* ProfileEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA2B492A1F7BB300023EDC /* ProfileEditVC.swift */; };
-		7CCA2B4C2A1F7C6400023EDC /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA2B4B2A1F7C6400023EDC /* ProfileEditView.swift */; };
-		7CCA2B4E2A20C2AA00023EDC /* ProfileEditTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA2B4D2A20C2AA00023EDC /* ProfileEditTable.swift */; };
 		7CCA2B502A20D6EA00023EDC /* EditProfileTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA2B4F2A20D6EA00023EDC /* EditProfileTVCell.swift */; };
 		7CDA5D3B29D572F8000E5633 /* CollectionsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDA5D3A29D572F8000E5633 /* CollectionsHeader.swift */; };
 /* End PBXBuildFile section */
@@ -104,8 +102,6 @@
 		7CC79E4A29E188CE0083F013 /* UserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
 		7CC79E4C29E2AB920083F013 /* PhotoScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollView.swift; sourceTree = "<group>"; };
 		7CCA2B492A1F7BB300023EDC /* ProfileEditVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditVC.swift; sourceTree = "<group>"; };
-		7CCA2B4B2A1F7C6400023EDC /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
-		7CCA2B4D2A20C2AA00023EDC /* ProfileEditTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditTable.swift; sourceTree = "<group>"; };
 		7CCA2B4F2A20D6EA00023EDC /* EditProfileTVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTVCell.swift; sourceTree = "<group>"; };
 		7CDA5D3A29D572F8000E5633 /* CollectionsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -281,9 +277,7 @@
 				7C501AB62A167DC200C65AE2 /* ProfileTab.swift */,
 				7CCA2B522A20D73500023EDC /* Controller */,
 				7CCA2B492A1F7BB300023EDC /* ProfileEditVC.swift */,
-				7CCA2B4D2A20C2AA00023EDC /* ProfileEditTable.swift */,
 				7CCA2B4F2A20D6EA00023EDC /* EditProfileTVCell.swift */,
-				7CCA2B4B2A1F7C6400023EDC /* ProfileEditView.swift */,
 			);
 			path = ProfileTab;
 			sourceTree = "<group>";
@@ -396,14 +390,12 @@
 				7CC79E4929E08DB60083F013 /* UserInfoView.swift in Sources */,
 				7CC06E5029EFE13900E39F69 /* UserLikesVC.swift in Sources */,
 				186C25CD29D2293A00BEA395 /* BlurHash.swift in Sources */,
-				7CCA2B4E2A20C2AA00023EDC /* ProfileEditTable.swift in Sources */,
 				7C957A9F29EF39FA00ACBDC0 /* UserPhotosVC.swift in Sources */,
 				7C28EE1529E8A38E00E7DD8C /* CollectionsSearchVC.swift in Sources */,
 				18A791DF298A7758007AD71E /* SearchVC.swift in Sources */,
 				7C4C5D032A212D3E00A5D996 /* UIColor+Extensions.swift in Sources */,
 				7CC79E4729E07B360083F013 /* PhotoDetailView.swift in Sources */,
 				7CC79E4D29E2AB920083F013 /* PhotoScrollView.swift in Sources */,
-				7CCA2B4C2A1F7C6400023EDC /* ProfileEditView.swift in Sources */,
 				18E865F529D76E7300F496CB /* PhotoVC.swift in Sources */,
 				7CC79E4B29E188CE0083F013 /* UserController.swift in Sources */,
 				7C957A9329EAEE2800ACBDC0 /* BaseSearchVC.swift in Sources */,
