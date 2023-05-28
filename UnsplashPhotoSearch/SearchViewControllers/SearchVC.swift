@@ -87,17 +87,9 @@ private extension SearchVC {
     }
 
     func setupChildVC() {
-        addChild(photosSearchVC)
-        addChild(collectionsSearchVC)
-        addChild(usersSearchVC)
-
-        stackView.addArrangedSubview(photosSearchVC.view)
-        stackView.addArrangedSubview(collectionsSearchVC.view)
-        stackView.addArrangedSubview(usersSearchVC.view)
-        
-        photosSearchVC.didMove(toParent: self)
-        collectionsSearchVC.didMove(toParent: self)
-        usersSearchVC.didMove(toParent: self)
+        addChildVC(photosSearchVC, superView: stackView)
+        addChildVC(collectionsSearchVC, superView: stackView)
+        addChildVC(usersSearchVC, superView: stackView)
     }
 
     func scrollViewSetup() {

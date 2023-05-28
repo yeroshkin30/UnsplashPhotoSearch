@@ -15,11 +15,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let sceneWindow = (scene as? UIWindowScene) else { return }
+        UserDefaults.standard.removeObject(forKey: UnsplashAPI.authorizationState)
+        UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
         let window = UIWindow(windowScene: sceneWindow)
         window.rootViewController = UnsplashTabBarController()
         window.makeKeyAndVisible()
-        UserDefaults.standard.removeObject(forKey: "User")
-        UserDefaults.standard.removeObject(forKey: UnsplashAPI.accessTokenKey)
         self.window = window
     }
 

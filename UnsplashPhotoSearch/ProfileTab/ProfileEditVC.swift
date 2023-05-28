@@ -15,9 +15,11 @@ class EditProfileVC: UIViewController {
         "First Name",
         "Last Name",
         "Username",
-        "Biography",
-        "Location"
+        "Location",
+        "Biography"
     ]
+
+    var editableUserData: EditableUserData = .init()
 
     lazy var userData = [
         user.firstName,
@@ -71,12 +73,12 @@ private extension EditProfileVC {
 
         let saveButton = UIBarButtonItem(
             systemItem: .save,
-            primaryAction: UIAction { _ in self.saveButtonTapped() }
+            primaryAction: UIAction { [unowned self] _ in self.saveButtonTapped() }
         )
 
         let cancelButton = UIBarButtonItem(
             systemItem: .cancel,
-            primaryAction: UIAction { _ in self.dismiss(animated: true) }
+            primaryAction: UIAction { [unowned self] _ in self.dismiss(animated: true) }
         )
 
         navigationItem.rightBarButtonItem = saveButton
@@ -110,6 +112,8 @@ extension EditProfileVC: UITableViewDataSource {
             holder: placeHolders[indexPath.row],
             text: userData[indexPath.row]
         )
+        cell.textField.tag = indexPath.row
+        cell.textField.delegate = self
 
         return cell
     }
@@ -118,3 +122,37 @@ extension EditProfileVC: UITableViewDataSource {
         "Profile"
     }
 }
+
+extension EditProfileVC: UITextFieldDelegate {
+//    func textChangedInCell(in field: ProfileField, text: String) {
+//        switch field {
+//        case TextFieldData.firstName.rawValue:
+//            editableUserData.firstName = textField.text
+//
+//        case TextFieldData.lastName.rawValue:
+//            editableUserData.lastName = textField.text
+//            
+//
+//        case TextFieldData.username.rawValue:
+//            editableUserData.userName = textField.text
+//
+//        case TextFieldData.location.rawValue:
+//            editableUserData.location = textField.text
+//
+//        case TextFieldData.biography.rawValue:
+//            editableUserData.biography = textField.text
+//
+//        default:
+//            return
+//        }
+//    }
+//    enum ProfileField: Int {
+//        case firstName = 0
+//        case lastName
+//        case username
+//        case location
+//        case biography
+//    }
+}
+
+

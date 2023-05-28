@@ -83,17 +83,9 @@ private extension UserVC {
     }
 
     func setupChildVC() {
-        addChild(userPhotosVC)
-        addChild(userLikesVC)
-        addChild(userCollectionsVC)
-
-        stackView.addArrangedSubview(userPhotosVC.view)
-        stackView.addArrangedSubview(userLikesVC.view)
-        stackView.addArrangedSubview(userCollectionsVC.view)
-
-        userPhotosVC.didMove(toParent: self)
-        userLikesVC.didMove(toParent: self)
-        userCollectionsVC.didMove(toParent: self)
+        addChildVC(userPhotosVC, superView:  stackView)
+        addChildVC(userLikesVC, superView:  stackView)
+        addChildVC(userCollectionsVC, superView:  stackView)
     }
 
     func scrollViewSetup() {

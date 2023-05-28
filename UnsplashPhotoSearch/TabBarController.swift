@@ -29,5 +29,8 @@ class UnsplashTabBarController: UITabBarController {
         viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
 
         tabBar.backgroundColor = .Unsplash.dark3
+        tabBar.unselectedItemTintColor = .white
     }
+
+    
 }

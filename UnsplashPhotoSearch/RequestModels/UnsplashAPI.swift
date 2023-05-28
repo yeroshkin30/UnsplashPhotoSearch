@@ -16,12 +16,22 @@ enum CliendId: String {
 
 
 enum UnsplashAPI {
+    static let authorizationState = "authorizationState"
     static let accessTokenKey = "accessTokenKey"
     static let callbackUrlScheme = "unsplashPhoto://authorization"
     static let clientID = CliendId.second.rawValue
     static let clientSecret = CliendId.secondSecret.rawValue
 
-    static let logOutURL = URL(string: "https://unsplash.com/logout")!
+    static var logOutURL: URL {
+        var urlComponents = URLComponents()
+        let responseType = "code"
+
+        urlComponents.scheme = "https"
+        urlComponents.host = "unsplash.com"
+        urlComponents.path = "/logout"
+        urlComponents.queryItems = [URLQueryItem(name: UnsplashParameterName.Authentication.redirectURI, value: "unsplash")]
+        return urlComponents.url!
+    }
 
     static var logInURL: URL {
         var urlComponents = URLComponents()

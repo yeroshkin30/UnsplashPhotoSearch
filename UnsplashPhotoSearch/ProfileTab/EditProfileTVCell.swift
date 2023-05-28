@@ -25,6 +25,8 @@ class EditProfileTVCell: UITableViewCell {
             make.top.bottom.equalTo(contentView)
             make.leading.trailing.equalTo(contentView).offset(20)
         }
+
+   
     }
 
     required init?(coder: NSCoder) {

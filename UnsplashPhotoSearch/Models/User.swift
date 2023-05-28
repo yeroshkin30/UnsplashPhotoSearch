@@ -11,7 +11,7 @@ struct User: Codable {
     let id: String
     let username: String
     let name: String
-    let firstName: String?
+    let firstName: String
     let lastName: String?
     let biography: String?
     let location: String?
@@ -45,7 +45,7 @@ struct User: Codable {
         id = try values.decode(String.self, forKey: .id)
         username = try values.decode(String.self, forKey: .username)
         name = try values.decode(String.self, forKey: .name)
-        firstName = try? values.decode(String.self, forKey: .firstName)
+        firstName = try values.decode(String.self, forKey: .firstName)
         lastName = try? values.decode(String.self, forKey: .lastName)
         biography = try? values.decode(String.self, forKey: .biography)
         location = try? values.decode(String.self, forKey: .location)
