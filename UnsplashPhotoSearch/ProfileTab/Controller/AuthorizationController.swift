@@ -8,32 +8,37 @@ final class AuthorizationController: NSObject {
     private var webAuthSession: ASWebAuthenticationSession?
     private let isAuthorized = UserDefaults.standard.bool(forKey: UnsplashAPI.authorizationState)
 
-    private(set) var authorizationState: AuthorizationState = .unauthorized {
+    private(set) var authState: AuthorizationState = .unauthorized {
         didSet {
-            authorizationStatesDidChange()
-            viewsIsHidden(for: authorizationState)
+            onAuthChange?(authState)
         }
     }
 
     var onAuthChange: ((AuthorizationState) -> Void)?
 
-    func authorizationState() -> ProfileTabVC.AuthorizationState {
-        if isAuthorized {
-            return .authorized
-        } else {
-            return .unauthorized
+    func checkAuthStatus() {
+        Task {
+            do {
+                if isAuthorized {
+                    authState = .authorizing
+                    try await loadAuthorizedUser()
+                } else {
+                    authState = .unauthorized
+                }
+            } catch {
+                print(error)
+            }
         }
     }
 
-    func loadAuthorizedUser() async throws -> User {
+    func loadAuthorizedUser() async throws  {
         let newRequest = URLRequest.Unsplash.userProfile()
         let user = try await UnsplashNetwork<User>().fetch(from: newRequest)
-
-        return user
+        authState = .authorized(user)
     }
 
     // MARK: - Authorization
-    func performAuthorization() async throws -> User {
+    func performAuthorization() async throws {
         let code: String = try await withUnsafeThrowingContinuation({ continuation in
             requestAuthorizationCode { code in
                 switch code {
@@ -45,18 +50,18 @@ final class AuthorizationController: NSObject {
             }
         })
         try await requestAccessToken(with: code)
-        let user = try await loadAuthorizedUser()
+        try await loadAuthorizedUser()
 
-        return user
     }
 
     private func requestAuthorizationCode(handler: @escaping (Result<String, Error>) -> Void) {
-        let handler: ASWebAuthenticationSession.CompletionHandler = { successURL, error in
+        let handler: ASWebAuthenticationSession.CompletionHandler = { [weak self] successURL, error in
             guard let successURL else { return }
 
             let queryItems = URLComponents(string: successURL.absoluteString)?.queryItems
 
             if let code = queryItems?.filter({$0.name == "code"}).first?.value {
+                self?.authState = .authorizing
                 handler(.success(code))
             } else {
                 handler(.failure(error!))
@@ -69,6 +74,7 @@ final class AuthorizationController: NSObject {
             completionHandler: handler
         )
         webAuthSession?.presentationContextProvider = self
+        webAuthSession?.prefersEphemeralWebBrowserSession = true
 
         webAuthSession?.start()
     }
@@ -81,23 +87,8 @@ final class AuthorizationController: NSObject {
     }
 
     func performLogOut() {
-        let handler: ASWebAuthenticationSession.CompletionHandler = { successURL, error in
-                self.cleanAuthorizationData()
-                self.webAuthSession?.cancel()
-
-        }
-
-        webAuthSession = ASWebAuthenticationSession.init(
-            url: UnsplashAPI.logOutURL,
-            callbackURLScheme: "unsplash",
-            completionHandler: handler
-        )
-        webAuthSession?.presentationContextProvider = self
-
-        webAuthSession?.start()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.webAuthSession?.cancel()
-        }
+        cleanAuthorizationData()
+        authState = .unauthorized
     }
 
     private func cleanAuthorizationData() {
@@ -114,9 +105,8 @@ extension AuthorizationController: ASWebAuthenticationPresentationContextProvidi
 
 extension AuthorizationController {
     enum AuthorizationState {
-        case authorized
+        case authorized(User)
         case unauthorized
         case authorizing
-        case unauthorizing
     }
 }

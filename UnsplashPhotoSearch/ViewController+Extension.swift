@@ -17,12 +17,13 @@ extension UIViewController {
             superView.addSubview(viewController.view)
         } else {
             view.addSubview(viewController.view)
-
         }
         viewController.didMove(toParent: self)
     }
     
-    func removeChildVC(_ viewController: UIViewController) {
+    func removeChildVC(_ viewController: UIViewController?) {
+        guard let viewController = viewController else { return }
+        
         viewController.willMove(toParent: nil)
         viewController.view.removeFromSuperview()
         viewController.removeFromParent()

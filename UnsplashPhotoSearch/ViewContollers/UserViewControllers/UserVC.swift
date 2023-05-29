@@ -57,7 +57,7 @@ class UserVC: UIViewController {
 
 private extension UserVC {
     func setup() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemGray6
         view.addSubview(userInfoView)
         view.addSubview(mediaSegmentedControl)
         view.addSubview(pagingScrollView)
@@ -100,7 +100,8 @@ private extension UserVC {
     func setupConstraints() {
         userInfoView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
-                .inset(UIEdgeInsets(top: 15, left: 8, bottom: 0, right: 8))
+                .inset(UIEdgeInsets(top: 8, left: 8, bottom: 0, right: 8))
+            make.height.equalTo(120)
         }
 
         mediaSegmentedControl.snp.makeConstraints { make in

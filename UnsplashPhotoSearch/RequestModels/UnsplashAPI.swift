@@ -22,17 +22,6 @@ enum UnsplashAPI {
     static let clientID = CliendId.second.rawValue
     static let clientSecret = CliendId.secondSecret.rawValue
 
-    static var logOutURL: URL {
-        var urlComponents = URLComponents()
-        let responseType = "code"
-
-        urlComponents.scheme = "https"
-        urlComponents.host = "unsplash.com"
-        urlComponents.path = "/logout"
-        urlComponents.queryItems = [URLQueryItem(name: UnsplashParameterName.Authentication.redirectURI, value: "unsplash")]
-        return urlComponents.url!
-    }
-
     static var logInURL: URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"

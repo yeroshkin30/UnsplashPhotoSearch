@@ -15,43 +15,17 @@ final class ProfileTabVC: UIViewController {
     private var profileVC: UserVC!
 
     private var user: User!
-    private var authorizationState: AuthorizationState = .unauthorized {
-        didSet {
-            authorizationStatesDidChange()
-            viewsIsHidden(for: authorizationState)
-        }
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        authorizationState = authorizationController.authorizationState()
-    }
-
-    func authorizationStatesDidChange() {
-        Task {
-            do {
-                switch authorizationState {
-                case .authorized:
-                    user = try await authorizationController.loadAuthorizedUser()
-                    setupProfileVC(with: user)
-
-                case .unauthorized:
-                    return
-                case .authorizing:
-                    user = try await authorizationController.performAuthorization()
-                    setupProfileVC(with: user)
-                case .unauthorizing:
-                    authorizationController.performLogOut()
-                }
-            } catch {
-                print(error)
-            }
-        }
+        authorizationController.checkAuthStatus()
     }
 
     private func logInButtonTapped() {
-        authorizationState = .authorizing
+        Task {
+            try? await authorizationController.performAuthorization()
+        }
     }
 
     // MARK: - UIMenuActions
@@ -61,9 +35,7 @@ final class ProfileTabVC: UIViewController {
     }
 
     private func logOutButtonTapped() {
-        authorizationState = .unauthorizing
-        removeChildVC(profileVC)
-
+        authorizationController.performLogOut()
     }
 
     // MARK: - Setup ProfileVC
@@ -106,8 +78,28 @@ private extension ProfileTabVC {
         logInButton.configuration?.title = "Log In"
         logInButton.configuration?.buttonSize = .large
         logInButton.addAction(UIAction { [weak self] _ in self?.logInButtonTapped() }, for: .touchUpInside)
-
+        setupEvents()
         setupConstraints()
+    }
+
+    func setupEvents() {
+        authorizationController.onAuthChange = { [weak self] state in
+            switch state {
+            case .authorized(let user):
+                self?.setupProfileVC(with: user)
+            case .authorizing:
+                self?.logInButton.isHidden = true
+                self?.loadingView.isHidden = false
+            case .unauthorized:
+                self?.userIsUnauthorized()
+            }
+        }
+    }
+
+    func userIsUnauthorized() {
+        logInButton.isHidden = false
+        loadingView.isHidden = true
+        removeChildVC(profileVC)
     }
 
     func setupConstraints() {
@@ -118,29 +110,6 @@ private extension ProfileTabVC {
 
         loadingView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-        }
-    }
-}
-
-extension ProfileTabVC {
-    enum AuthorizationState {
-        case authorized
-        case unauthorized
-        case authorizing
-        case unauthorizing
-    }
-
-    private func viewsIsHidden(for state: AuthorizationState) {
-        switch state {
-        case .authorized:
-            logInButton.isHidden = true
-            loadingView.isHidden = true
-        case .unauthorized:
-            logInButton.isHidden = false
-            loadingView.isHidden = true
-        case .authorizing, .unauthorizing:
-            logInButton.isHidden = true
-            loadingView.isHidden = false
         }
     }
 }

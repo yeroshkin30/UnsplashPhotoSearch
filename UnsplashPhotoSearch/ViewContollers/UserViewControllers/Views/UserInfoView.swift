@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 
 class UserInfoView: UIView {
+    private let profileImage: UIImageView = .init()
     private let usernameLabel: UILabel = .init()
     private let nameLabel: UILabel = .init()
-    private let profileImage: UIImageView = .init()
-
-    private let userDataStackView: UIStackView = .init()
     private let labelStackView: UIStackView = .init()
 
     var configuration: Configuration? {
@@ -31,21 +29,16 @@ class UserInfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-
     private func setup() {
-        addSubview(userDataStackView)
+        addSubview(profileImage)
+        addSubview(labelStackView)
+
+        profileImage.layer.cornerRadius = 15
+        profileImage.clipsToBounds = true
 
         setupLabels()
-        setupStackViews()
+        setupStackView()
         setupConstraints()
-    }
-
-    private func configurationDidChange() {
-        guard let configuration else { return }
-        
-        usernameLabel.text = configuration.username
-        nameLabel.text = configuration.name
-        profileImage.kf.setImage(with: configuration.imageURL)
     }
 
     private func setupLabels() {
@@ -53,30 +46,36 @@ class UserInfoView: UIView {
         nameLabel.font = UIFont.systemFont(ofSize: 20)
     }
 
-    private func setupStackViews() {
+    private func setupStackView() {
         labelStackView.addArrangedSubview(nameLabel)
         labelStackView.addArrangedSubview(usernameLabel)
         labelStackView.axis = .vertical
         labelStackView.alignment = .leading
-        labelStackView.distribution = .equalSpacing
+        labelStackView.distribution = .fill
         labelStackView.spacing = 10
-
-        userDataStackView.addArrangedSubview(profileImage)
-        userDataStackView.addArrangedSubview(labelStackView)
-        userDataStackView.axis = .horizontal
-        userDataStackView.alignment = .leading
-        userDataStackView.distribution = .fill
-        userDataStackView.spacing = 10
     }
 
     private func setupConstraints() {
-        userDataStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        profileImage.snp.makeConstraints { make in
+            make.top.bottom.leading.equalToSuperview()
+            make.width.equalTo(profileImage.snp.height)
+        }
+        labelStackView.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(5)
+            make.leading.equalTo(profileImage.snp.trailing).offset(5)
         }
     }
 }
 
 extension UserInfoView {
+    private func configurationDidChange() {
+        guard let configuration else { return }
+
+        usernameLabel.text = configuration.username
+        nameLabel.text = configuration.name
+        profileImage.kf.setImage(with: configuration.imageURL)
+    }
+
     struct Configuration {
         let name: String
         let username: String
