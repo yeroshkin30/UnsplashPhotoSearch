@@ -56,6 +56,7 @@ class UserInfoView: UIView {
     }
 
     private func setupConstraints() {
+      
         profileImage.snp.makeConstraints { make in
             make.top.bottom.leading.equalToSuperview()
             make.width.equalTo(profileImage.snp.height)

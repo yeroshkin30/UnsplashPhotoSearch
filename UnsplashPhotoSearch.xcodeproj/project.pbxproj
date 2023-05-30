@@ -124,6 +124,7 @@
 		186C25CE29D22B7900BEA395 /* help */ = {
 			isa = PBXGroup;
 			children = (
+				7CBC82612A266CC400EECF7E /* UIKit Extensions */,
 				18C81CE12989BAA6009707AB /* SceneDelegate.swift */,
 				18C81CDF2989BAA6009707AB /* AppDelegate.swift */,
 				18C81CE82989BAA8009707AB /* Assets.xcassets */,
@@ -166,9 +167,6 @@
 		18C81CDE2989BAA6009707AB /* UnsplashPhotoSearch */ = {
 			isa = PBXGroup;
 			children = (
-				7CC79E4029DD6A060083F013 /* UICollectionView+Extensions.swift */,
-				7C4C5D022A212D3E00A5D996 /* UIColor+Extensions.swift */,
-				7CBC825D2A226DE500EECF7E /* ViewController+Extension.swift */,
 				7C501AAE2A160BC400C65AE2 /* TabBarController.swift */,
 				7CCA2B512A20D71700023EDC /* ProfileTab */,
 				7CDA5D3C29D57F2E000E5633 /* Cells */,
@@ -250,6 +248,16 @@
 				7CC06E5329EFE91400E39F69 /* UserViewControllers */,
 			);
 			path = ViewContollers;
+			sourceTree = "<group>";
+		};
+		7CBC82612A266CC400EECF7E /* UIKit Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				7CC79E4029DD6A060083F013 /* UICollectionView+Extensions.swift */,
+				7C4C5D022A212D3E00A5D996 /* UIColor+Extensions.swift */,
+				7CBC825D2A226DE500EECF7E /* ViewController+Extension.swift */,
+			);
+			path = "UIKit Extensions";
 			sourceTree = "<group>";
 		};
 		7CC06E5329EFE91400E39F69 /* UserViewControllers */ = {

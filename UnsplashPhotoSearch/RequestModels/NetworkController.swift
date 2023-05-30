@@ -13,6 +13,38 @@ enum NetworkErrors: Error {
     case photoDataNotFound
 }
 
+struct NetworkService {
+    let unsplashURLSession: URLSession = {
+        let sessionConfig = URLSessionConfiguration.default
+        let session = URLSession(configuration: sessionConfig)
+
+        return session
+    }()
+
+    func searchRequest<ItemType: Codable>(with urlRequest: URLRequest) async throws -> [ItemType] {
+        let (data, response) = try await unsplashURLSession.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NetworkErrors.searchDataNotFound
+        }
+        let searchData = try JSONDecoder().decode(SearchResults<ItemType>.self, from: data)
+
+        return searchData.results
+    }
+
+    func fetch<ItemType: Codable>(from request: URLRequest) async throws -> ItemType {
+        let (data, response) = try await unsplashURLSession.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NetworkErrors.searchDataNotFound
+        }
+        let searchResults = try JSONDecoder().decode(ItemType.self, from: data)
+
+        return searchResults
+    }
+}
+
+
 struct SearchRequest<ItemType: Codable> {
 
     private func decodeResponse(data: Data) throws -> [ItemType] {

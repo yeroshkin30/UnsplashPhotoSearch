@@ -11,10 +11,20 @@ import SnapKit
 final class ProfileTabVC: UIViewController {
     private let logInButton: UIButton = .init(configuration: .filled())
     private let loadingView: UIActivityIndicatorView = .init()
-    private var authorizationController: AuthorizationController = .init()
+    private var authorizationController: AuthorizationController
     private var profileVC: UserVC!
 
+    var onEvent: ((User) -> Void)?
     private var user: User!
+
+    init(with authorizationController: AuthorizationController) {
+        self.authorizationController = authorizationController
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,6 +80,7 @@ final class ProfileTabVC: UIViewController {
 
 private extension ProfileTabVC {
     func setup() {
+        tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
         view.backgroundColor = .white
         view.addSubview(logInButton)
         view.addSubview(loadingView)

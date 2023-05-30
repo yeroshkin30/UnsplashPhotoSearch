@@ -45,7 +45,7 @@ class EditProfileVC: UIViewController {
 
     func saveButtonTapped() {
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! EditProfileTVCell
-        cell.textField.text
+//        cell.textField.text
     }
 
     //    func userData() {

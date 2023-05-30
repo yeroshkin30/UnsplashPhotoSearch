@@ -33,7 +33,7 @@ class UserMediaVC<MediaType: Codable>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        fetchFirstPage()
+//        fetchFirstPage()
     }
     func fetchFirstPage() {
         fetchMediaTask?.cancel()

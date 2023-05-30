@@ -9,28 +9,34 @@ import UIKit
 
 class UnsplashTabBarController: UITabBarController {
 
-    let searchVC: SearchVC = {
-        let vc = SearchVC()
-        let sys = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-        vc.tabBarItem = sys
+    let networkService: NetworkService = .init()
+    let authController: AuthorizationController = .init()
 
-        return vc
-    }()
-
-    let profileTabVC: ProfileTabVC = {
-        let vc = ProfileTabVC()
-        let sys = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
-        vc.tabBarItem = sys
-
-        return vc
-    }()
     override func viewDidLoad() {
         super.viewDidLoad()
+        setup()
+    }
+
+    func setup() {
+        let searchVC = SearchVC()
+        let searchTabItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+        searchVC.tabBarItem = searchTabItem
+
+        let profileTabVC = ProfileTabVC(with: authController)
+
+
+        let profileTabItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
+        profileTabVC.tabBarItem = profileTabItem
+        profileTabVC.onEvent = { user in
+
+        }
         viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
 
         tabBar.backgroundColor = .Unsplash.dark3
         tabBar.unselectedItemTintColor = .white
     }
+}
 
-    
+extension UnsplashTabBarController {
+
 }
