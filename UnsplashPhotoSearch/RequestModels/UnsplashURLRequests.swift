@@ -7,78 +7,75 @@
 
 import Foundation
 
-extension Array where Element == URLQueryItem {
-    static func unsplashQuery(word: String? = nil, page: Int) -> [URLQueryItem] {
-        var queryItems = [URLQueryItem(name: "page", value: "\(page)"),
-                          URLQueryItem(name: "per_page", value: "30")]
-
-        if let word {
-            queryItems.append(URLQueryItem(name: "query", value: word))
-        }
-
-        return queryItems
+enum UnsplashRequests {
+    static func searchItems<Response>(type: SearchEndpoint, items: SearchParam) -> NetworkRequest<Response> {
+        NetworkRequest(with: URLRequest(
+            path: type.path,
+            queryItems: type.queryItems(items: items))
+        )
     }
-}
+    
+    static func userMedia<Response>(type: UserEndpoint, items: UserParam) -> NetworkRequest<Response> {
+        NetworkRequest(with: URLRequest(
+            path: type.path,
+            queryItems: type.queryItems(items: items),
+            method: type.httpMethod)
+        )
+    }
+    
+    static func collectionsPhoto(id collection: CollectionEndpoint, items: CollectionParam) -> NetworkRequest<[Photo]> {
+        NetworkRequest(with: URLRequest(
+            path: collection.path,
+            queryItems: collection.queryItems(items: items),
+            method: collection.httpMethod)
+        )
+    }
+    
+    static func singlePhoto(id photo: PhotoEndpoint ) -> NetworkRequest<Photo> {
+        NetworkRequest(with: URLRequest(path: photo.path))
+    }
+    
+    // MARK: - AuthorizationRequests
+    static func userToken(with code: String) -> NetworkRequest<Token> {
+        let queryItems = [
+            UnsplashParameterName.Authentication.clientID:      UnsplashAPI.clientID,
+            UnsplashParameterName.Authentication.clientSecret:  UnsplashAPI.clientSecret,
+            UnsplashParameterName.Authentication.redirectURI:   UnsplashAPI.callbackUrlScheme,
+            UnsplashParameterName.Authentication.code:          code,
+            UnsplashParameterName.Authentication.grantType:     UnsplashParameterName.Authentication.authorizationCode
+        ].map { URLQueryItem(name: $0.key, value: $0.value) }
 
-
-extension URLRequest {
-    static func unsplash(path: String, queryItems: [URLQueryItem]? = nil) -> URLRequest {
-        var components = URLComponents(string: "https://api.unsplash.com")!
-        components.path = path
+        var components = URLComponents(string: "https://unsplash.com")!
+        components.path = "/oauth/token"
         components.queryItems = queryItems
 
-        var urlRequest = URLRequest(url: components.url!)
-        urlRequest.allHTTPHeaderFields = ["Authorization": "Client-ID \(UnsplashAPI.clientID)"]
-        if let token = UserDefaults.standard.string(forKey: UnsplashAPI.accessTokenKey) {
-            urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(token)"]
-        }
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = HTTPMethod.POST.rawValue
 
-        return urlRequest
+        return NetworkRequest(with: request)
+    }
+
+    static func userProfile() -> NetworkRequest<User> {
+        NetworkRequest(with: URLRequest(path: "/me"))
+    }
+
+    static func editUserProfile(with editableData: EditableUserData) -> NetworkRequest<User> {
+        let parameters = [
+            UnsplashParameterName.User.userName: editableData.userName,
+            UnsplashParameterName.User.firstName: editableData.firstName,
+            UnsplashParameterName.User.lastName: editableData.lastName,
+            UnsplashParameterName.User.location: editableData.location,
+            UnsplashParameterName.User.biography: editableData.biography
+        ].compactMapValues { $0 }
+        let queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+
+        return NetworkRequest(with: URLRequest(
+            path: "/me",
+            queryItems: queryItems,
+            method: .PUT))
     }
 }
 
-extension URLRequest {
-    enum Unsplash {
-        static func search(category: String, word: String,page: Int) -> URLRequest {
-            URLRequest.unsplash(path: "/search/\(category)",
-                                queryItems: .unsplashQuery(word: word, page: page))
-        }
 
-        static func userMedia(username: String, mediaType: String, page: Int) -> URLRequest {
-            URLRequest.unsplash(path: "/users/\(username)/\(mediaType)",
-                                queryItems: .unsplashQuery(page: page))
-        }
 
-        static func collectionsPhoto(id collection: String, page: Int) -> URLRequest {
-            URLRequest.unsplash(path: "/collections/\(collection)/photos",
-                                queryItems: .unsplashQuery(page: page))
-        }
 
-        static func singlePhoto(id photoID: String) -> URLRequest {
-            URLRequest.unsplash(path: "/photos/\(photoID)")
-        }
-
-        static func userToken(with code: String) -> URLRequest {
-            let itemsDictionary = [
-                UnsplashParameterName.Authentication.clientID:      UnsplashAPI.clientID,
-                UnsplashParameterName.Authentication.clientSecret:  UnsplashAPI.clientSecret,
-                UnsplashParameterName.Authentication.redirectURI:   UnsplashAPI.callbackUrlScheme,
-                UnsplashParameterName.Authentication.code:          code,
-                UnsplashParameterName.Authentication.grantType:     UnsplashParameterName.Authentication.authorizationCode
-            ]
-
-            var components = URLComponents(string: "https://unsplash.com")!
-            components.path = "/oauth/token"
-            components.queryItems = itemsDictionary.map { URLQueryItem(name: $0.key, value: $0.value) }
-
-            var request = URLRequest(url: components.url!)
-            request.httpMethod = "POST"
-
-            return request
-        }
-
-        static func userProfile() -> URLRequest {
-            URLRequest.unsplash(path: "/me")
-        }
-    }
-}

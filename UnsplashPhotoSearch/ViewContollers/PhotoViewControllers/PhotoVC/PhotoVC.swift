@@ -13,7 +13,7 @@ class PhotoVC: UIViewController {
     private lazy var photoView: PhotoView = .init(frame: view.bounds)
 
     var photo: Photo
-    var requestController = UnsplashNetwork<Photo>()
+    var networkService: NetworkService = .init()
 
     init(photo: Photo) {
         self.photo = photo
@@ -35,8 +35,8 @@ class PhotoVC: UIViewController {
         photoView.configuration = .init(photo: self.photo)
 
         Task {
-            let request = URLRequest.Unsplash.singlePhoto(id: photo.id)
-            self.photo = try await requestController.fetch(from: request)
+            let urlRequest: NetworkRequest<Photo> = UnsplashRequests.singlePhoto(id: .photo(photo.id))
+            self.photo = try await networkService.perform(with: urlRequest)
         }
     }
 }

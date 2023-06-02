@@ -40,8 +40,7 @@ final class ProfileTabVC: UIViewController {
 
     // MARK: - UIMenuActions
     private func editButtonTapped() {
-        let editProfileVC = UINavigationController(rootViewController: EditProfileVC(user: user))
-        present(editProfileVC, animated: true)
+        onEvent?(user)
     }
 
     private func logOutButtonTapped() {
@@ -78,6 +77,7 @@ final class ProfileTabVC: UIViewController {
     }
 }
 
+    //MARK: - Setup
 private extension ProfileTabVC {
     func setup() {
         tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)

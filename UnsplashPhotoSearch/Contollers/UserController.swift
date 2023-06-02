@@ -7,24 +7,26 @@
 
 import UIKit
 
-class UserMediaController<FetchedItem: Codable> {
-
+class UserMediaController<Item: Codable> {
     private var page: Int = 0
-    private var mediaType: String
-    private var username: String
+    private var mediaType: UserEndpoint
 
-    init(_ mediaType: String, username: String) {
+    let networkService: NetworkService = .init()
+
+    init(_ mediaType: UserEndpoint) {
         self.mediaType = mediaType
-        self.username = username
     }
 
 
     //actor
-    func loadNextPage() async throws -> [FetchedItem] {
+    func loadNextPage() async throws -> [Item] {
         page += 1
-        let urlRequest = URLRequest.Unsplash.userMedia(username: username, mediaType: mediaType, page: page)
-        let searchItems = try await UnsplashNetwork<[FetchedItem]>().fetch(from: urlRequest)
+        let urlRequest: NetworkRequest<[Item]> = UnsplashRequests.userMedia(
+            type: mediaType,
+            items: .init(page: page)
+        )
+        let items = try await networkService.perform(with: urlRequest)
 
-        return searchItems
+        return items
     }
 }

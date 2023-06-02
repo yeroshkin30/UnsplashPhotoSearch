@@ -61,6 +61,14 @@ enum UnsplashParameterName {
         static let scope = "scope"
         static let grantType = "grant_type"
     }
+
+    enum User {
+        static let userName             = "username"
+        static let firstName         = "first_name"
+        static let lastName             = "last_name"
+        static let location             = "location"
+        static let biography                = "bio"
+    }
 }
 
 enum UnsplashPermissionScope: String {

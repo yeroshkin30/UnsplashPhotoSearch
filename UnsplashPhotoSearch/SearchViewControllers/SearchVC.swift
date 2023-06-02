@@ -15,9 +15,9 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
 
-    private let photosController = DataRequestController<Photo>(category: Category.photos.rawValue)
-    private let collectionsController = DataRequestController<Collection>(category: Category.collections.rawValue)
-    private let usersController = DataRequestController<User>(category: Category.users.rawValue)
+    private let photosController = DataRequestController<Photo>(category: .photo)
+    private let collectionsController = DataRequestController<Collection>(category: .collection)
+    private let usersController = DataRequestController<User>(category: .user)
 
     lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosController )
     lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsController)
@@ -62,6 +62,8 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
 //UISetup
 private extension SearchVC {
     func setup() {
+        tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+
         view.backgroundColor = .white
         view.addSubview(pagingScrollView)
 
@@ -104,7 +106,6 @@ private extension SearchVC {
     func setupConstraints() {
         pagingScrollView.snp.makeConstraints { make in
             make.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-
         }
 
         stackView.snp.makeConstraints { make in
@@ -115,13 +116,5 @@ private extension SearchVC {
             make.height.equalTo(view.safeAreaLayoutGuide.snp.height)
             make.width.equalTo(view.safeAreaLayoutGuide.snp.width)
         }
-    }
-}
-
-extension SearchVC {
-    enum Category: String {
-        case photos
-        case collections
-        case users
     }
 }

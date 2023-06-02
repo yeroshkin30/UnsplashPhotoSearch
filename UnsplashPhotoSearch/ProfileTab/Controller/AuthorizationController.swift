@@ -16,6 +16,9 @@ final class AuthorizationController: NSObject {
 
     var onAuthChange: ((AuthorizationState) -> Void)?
 
+    let networkService: NetworkService = .init()
+
+
     func checkAuthStatus() {
         Task {
             do {
@@ -32,8 +35,8 @@ final class AuthorizationController: NSObject {
     }
 
     func loadAuthorizedUser() async throws  {
-        let newRequest = URLRequest.Unsplash.userProfile()
-        let user = try await UnsplashNetwork<User>().fetch(from: newRequest)
+        let urlRequest = UnsplashRequests.userProfile()
+        let user = try await networkService.perform(with: urlRequest)
         authState = .authorized(user)
     }
 
@@ -80,8 +83,8 @@ final class AuthorizationController: NSObject {
     }
 
     private func requestAccessToken(with code: String) async throws {
-        let request = URLRequest.Unsplash.userToken(with: code)
-        let token = try await UnsplashNetwork<Token>().fetch(from: request)
+        let urlRequest = UnsplashRequests.userToken(with: code)
+        let token = try await networkService.perform(with: urlRequest)
         UserDefaults.standard.set(token.access_token, forKey: UnsplashAPI.accessTokenKey)
         UserDefaults.standard.set(true, forKey: UnsplashAPI.authorizationState)
     }

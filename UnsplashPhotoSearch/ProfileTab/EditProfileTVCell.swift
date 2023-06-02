@@ -12,6 +12,8 @@ class EditProfileTVCell: UITableViewCell {
     static let identifier = "EditProfileTVCell"
 
     let textField: UITextField = .init()
+    var field: EditProfileVC.ProfileField?
+    var onEvent: ((EditProfileVC.ProfileField, String) -> Void)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,8 +27,6 @@ class EditProfileTVCell: UITableViewCell {
             make.top.bottom.equalTo(contentView)
             make.leading.trailing.equalTo(contentView).offset(20)
         }
-
-   
     }
 
     required init?(coder: NSCoder) {
@@ -36,5 +36,12 @@ class EditProfileTVCell: UITableViewCell {
     func configuration(holder: String, text: String?) {
         textField.placeholder = holder
         textField.text = text
+    }
+}
+
+extension EditProfileTVCell: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let field, let text = textField.text else { return }
+        onEvent?(field, text)
     }
 }

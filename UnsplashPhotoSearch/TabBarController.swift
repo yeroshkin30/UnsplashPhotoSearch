@@ -12,6 +12,8 @@ class UnsplashTabBarController: UITabBarController {
     let networkService: NetworkService = .init()
     let authController: AuthorizationController = .init()
 
+    var profileTabVC: ProfileTabVC!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -19,16 +21,10 @@ class UnsplashTabBarController: UITabBarController {
 
     func setup() {
         let searchVC = SearchVC()
-        let searchTabItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-        searchVC.tabBarItem = searchTabItem
 
-        let profileTabVC = ProfileTabVC(with: authController)
-
-
-        let profileTabItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
-        profileTabVC.tabBarItem = profileTabItem
-        profileTabVC.onEvent = { user in
-
+        profileTabVC = ProfileTabVC(with: authController)
+        profileTabVC.onEvent = { [weak self] user in
+            self?.showEditProfileVC(with: user)
         }
         viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
 
@@ -38,5 +34,15 @@ class UnsplashTabBarController: UITabBarController {
 }
 
 extension UnsplashTabBarController {
-
+    func showEditProfileVC(with user: User) {
+        let editProfileVC = EditProfileVC(network: networkService, user: user)
+        editProfileVC.onEvent = { [weak self] event in
+            switch event {
+            case .save(let user):
+                print("Save")
+            case .cancel:
+                print("cancel")
+            }
+        }
+    }
 }

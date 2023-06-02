@@ -21,29 +21,28 @@ struct NetworkService {
         return session
     }()
 
-    func searchRequest<ItemType: Codable>(with urlRequest: URLRequest) async throws -> [ItemType] {
-        let (data, response) = try await unsplashURLSession.data(for: urlRequest)
+    func performSearch<Response: Codable>(with request: NetworkRequest<Response>) async throws -> [Response] {
+        let (data, response) = try await unsplashURLSession.data(for: request.urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkErrors.searchDataNotFound
         }
-        let searchData = try JSONDecoder().decode(SearchResults<ItemType>.self, from: data)
+        let searchResults = try JSONDecoder().decode(SearchResults<Response>.self, from: data)
 
-        return searchData.results
+        return searchResults.results
     }
 
-    func fetch<ItemType: Codable>(from request: URLRequest) async throws -> ItemType {
-        let (data, response) = try await unsplashURLSession.data(for: request)
+    func perform<Response: Codable>(with request: NetworkRequest<Response>) async throws -> Response {
+        let (data, response) = try await unsplashURLSession.data(for: request.urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkErrors.searchDataNotFound
         }
-        let searchResults = try JSONDecoder().decode(ItemType.self, from: data)
+        let searchResults = try request.decoder(data)
 
         return searchResults
     }
 }
-
 
 struct SearchRequest<ItemType: Codable> {
 

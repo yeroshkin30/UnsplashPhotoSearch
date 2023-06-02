@@ -29,6 +29,11 @@
 		18F3DC0B29DDF0F700F0F93B /* LikesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F3DC0A29DDF0F700F0F93B /* LikesView.swift */; };
 		7C28EE1529E8A38E00E7DD8C /* CollectionsSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C28EE1429E8A38E00E7DD8C /* CollectionsSearchVC.swift */; };
 		7C28EE1729E8A51B00E7DD8C /* UsersSeachVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C28EE1629E8A51B00E7DD8C /* UsersSeachVC.swift */; };
+		7C32BC772A2931720064F010 /* CollectionEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32BC762A2931720064F010 /* CollectionEndpoint.swift */; };
+		7C32BC792A2931D50064F010 /* NetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32BC782A2931D50064F010 /* NetworkRequest.swift */; };
+		7C32BC7B2A2933690064F010 /* SearchEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32BC7A2A2933690064F010 /* SearchEndpoint.swift */; };
+		7C32BC7D2A2938480064F010 /* UserEdnpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32BC7C2A2938480064F010 /* UserEdnpoint.swift */; };
+		7C32BC7F2A293DBF0064F010 /* PhotoEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32BC7E2A293DBF0064F010 /* PhotoEndpoint.swift */; };
 		7C501AAF2A160BC400C65AE2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C501AAE2A160BC400C65AE2 /* TabBarController.swift */; };
 		7C501AB12A160F9700C65AE2 /* AuthorizationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C501AB02A160F9700C65AE2 /* AuthorizationController.swift */; };
 		7C501AB52A166B3D00C65AE2 /* UnsplashAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C501AB42A166B3D00C65AE2 /* UnsplashAPI.swift */; };
@@ -81,6 +86,11 @@
 		18F3DC0A29DDF0F700F0F93B /* LikesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesView.swift; sourceTree = "<group>"; };
 		7C28EE1429E8A38E00E7DD8C /* CollectionsSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsSearchVC.swift; sourceTree = "<group>"; };
 		7C28EE1629E8A51B00E7DD8C /* UsersSeachVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersSeachVC.swift; sourceTree = "<group>"; };
+		7C32BC762A2931720064F010 /* CollectionEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionEndpoint.swift; sourceTree = "<group>"; };
+		7C32BC782A2931D50064F010 /* NetworkRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRequest.swift; sourceTree = "<group>"; };
+		7C32BC7A2A2933690064F010 /* SearchEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEndpoint.swift; sourceTree = "<group>"; };
+		7C32BC7C2A2938480064F010 /* UserEdnpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEdnpoint.swift; sourceTree = "<group>"; };
+		7C32BC7E2A293DBF0064F010 /* PhotoEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoEndpoint.swift; sourceTree = "<group>"; };
 		7C501AAE2A160BC400C65AE2 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		7C501AB02A160F9700C65AE2 /* AuthorizationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationController.swift; sourceTree = "<group>"; };
 		7C501AB42A166B3D00C65AE2 /* UnsplashAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashAPI.swift; sourceTree = "<group>"; };
@@ -185,10 +195,23 @@
 			isa = PBXGroup;
 			children = (
 				18A791E2298A92AA007AD71E /* NetworkController.swift */,
+				7C32BC782A2931D50064F010 /* NetworkRequest.swift */,
 				7C957A9429EC073700ACBDC0 /* UnsplashURLRequests.swift */,
+				7C32BC802A2949550064F010 /* APIEndpoints */,
 				7C501AB42A166B3D00C65AE2 /* UnsplashAPI.swift */,
 			);
 			path = RequestModels;
+			sourceTree = "<group>";
+		};
+		7C32BC802A2949550064F010 /* APIEndpoints */ = {
+			isa = PBXGroup;
+			children = (
+				7C32BC762A2931720064F010 /* CollectionEndpoint.swift */,
+				7C32BC7A2A2933690064F010 /* SearchEndpoint.swift */,
+				7C32BC7E2A293DBF0064F010 /* PhotoEndpoint.swift */,
+				7C32BC7C2A2938480064F010 /* UserEdnpoint.swift */,
+			);
+			path = APIEndpoints;
 			sourceTree = "<group>";
 		};
 		7C45F16329FC25340071E4A5 /* PhotoVC */ = {
@@ -415,6 +438,7 @@
 				18F3DBFE29DAEE2800F0F93B /* PreviewPhoto.swift in Sources */,
 				18F3DC0B29DDF0F700F0F93B /* LikesView.swift in Sources */,
 				7C501AB12A160F9700C65AE2 /* AuthorizationController.swift in Sources */,
+				7C32BC772A2931720064F010 /* CollectionEndpoint.swift in Sources */,
 				7CBC825C2A21EAEB00EECF7E /* EditableUserData.swift in Sources */,
 				186C25D029D2377400BEA395 /* Collections.swift in Sources */,
 				18F3DC0329DB38BF00F0F93B /* DataRequestController.swift in Sources */,
@@ -424,16 +448,20 @@
 				18E865ED29D5C21500F496CB /* User.swift in Sources */,
 				7C602BF22A27896800D6FCA4 /* ViewController+Extension.swift in Sources */,
 				18C50650299D0E2800D28B1A /* ImageInfoCell.swift in Sources */,
+				7C32BC7D2A2938480064F010 /* UserEdnpoint.swift in Sources */,
 				7C28EE1729E8A51B00E7DD8C /* UsersSeachVC.swift in Sources */,
 				7CADB6182A191E87006EBF72 /* Token.swift in Sources */,
 				7CC79E3E29DC8D500083F013 /* PhotoDetailVC.swift in Sources */,
 				18A791E3298A92AA007AD71E /* NetworkController.swift in Sources */,
 				7C957A9529EC073700ACBDC0 /* UnsplashURLRequests.swift in Sources */,
 				7C501AB52A166B3D00C65AE2 /* UnsplashAPI.swift in Sources */,
+				7C32BC7B2A2933690064F010 /* SearchEndpoint.swift in Sources */,
+				7C32BC792A2931D50064F010 /* NetworkRequest.swift in Sources */,
 				7CAB612E29E7E470001891D3 /* PhotosSearchVC.swift in Sources */,
 				18C81CE22989BAA6009707AB /* SceneDelegate.swift in Sources */,
 				18F3DC0929DDE47900F0F93B /* PhotoView.swift in Sources */,
 				7CC79E3C29DC8C550083F013 /* UserVC.swift in Sources */,
+				7C32BC7F2A293DBF0064F010 /* PhotoEndpoint.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

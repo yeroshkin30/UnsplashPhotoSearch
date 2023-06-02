@@ -10,7 +10,6 @@ import SnapKit
 
 class EditProfileVC: UIViewController {
     private let tableView: UITableView = .init(frame: .zero, style: .insetGrouped)
-    private let user: User
     private let placeHolders = [
         "First Name",
         "Last Name",
@@ -18,9 +17,6 @@ class EditProfileVC: UIViewController {
         "Location",
         "Biography"
     ]
-
-    var editableUserData: EditableUserData = .init()
-
     lazy var userData = [
         user.firstName,
         user.lastName,
@@ -29,7 +25,16 @@ class EditProfileVC: UIViewController {
         user.location
     ]
 
-    init(user: User) {
+    var onEvent: ((EditEvent) -> Void)?
+
+    var editableUserData: EditableUserData = .init()
+
+// MARK: - Initialiser
+    private let user: User
+    private let networkService: NetworkService
+
+    init(network: NetworkService, user: User) {
+        self.networkService = network
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
@@ -43,18 +48,25 @@ class EditProfileVC: UIViewController {
         setup()
     }
 
-    func saveButtonTapped() {
-        let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! EditProfileTVCell
-//        cell.textField.text
+// MARK: - Events
+    private func saveButtonTapped() {
+        guard editableUserData.isDataValid() else { return }
+
+        let request = UnsplashRequests.editUserProfile(with: editableUserData)
+        Task {
+            do {
+                let user: User = try await networkService.perform(with: request)
+                onEvent?(.save(user))
+            } catch {
+                print(error)
+            }
+        }
+
     }
 
-    //    func userData() {
-    //        let firstName = user.firstName
-    //        let lastName = user.lastName
-    //        let userName = user.username
-    //        let biography = user.biography
-    //        let location = user.location
-    //    }
+    private func cancelButtonTapped() {
+        onEvent?(.cancel)
+    }
 }
 
 // MARK: - Setup VC
@@ -78,7 +90,7 @@ private extension EditProfileVC {
 
         let cancelButton = UIBarButtonItem(
             systemItem: .cancel,
-            primaryAction: UIAction { [unowned self] _ in self.dismiss(animated: true) }
+            primaryAction: UIAction { [unowned self] _ in self.cancelButtonTapped() }
         )
 
         navigationItem.rightBarButtonItem = saveButton
@@ -112,8 +124,11 @@ extension EditProfileVC: UITableViewDataSource {
             holder: placeHolders[indexPath.row],
             text: userData[indexPath.row]
         )
-        cell.textField.tag = indexPath.row
-        cell.textField.delegate = self
+
+        cell.field = ProfileField(rawValue: indexPath.row)
+        cell.onEvent = { [weak self] field, text in
+            self?.textChangedInCell(in: field, text: text)
+        }
 
         return cell
     }
@@ -123,36 +138,35 @@ extension EditProfileVC: UITableViewDataSource {
     }
 }
 
+// MARK: - Delegate
 extension EditProfileVC: UITextFieldDelegate {
-//    func textChangedInCell(in field: ProfileField, text: String) {
-//        switch field {
-//        case TextFieldData.firstName.rawValue:
-//            editableUserData.firstName = textField.text
-//
-//        case TextFieldData.lastName.rawValue:
-//            editableUserData.lastName = textField.text
-//            
-//
-//        case TextFieldData.username.rawValue:
-//            editableUserData.userName = textField.text
-//
-//        case TextFieldData.location.rawValue:
-//            editableUserData.location = textField.text
-//
-//        case TextFieldData.biography.rawValue:
-//            editableUserData.biography = textField.text
-//
-//        default:
-//            return
-//        }
-//    }
-//    enum ProfileField: Int {
-//        case firstName = 0
-//        case lastName
-//        case username
-//        case location
-//        case biography
-//    }
+
+    func textChangedInCell(in field: ProfileField, text: String) {
+        switch field {
+        case .firstName:
+            editableUserData.firstName = text
+        case .lastName:
+            editableUserData.lastName = text
+        case .username:
+            editableUserData.userName = text
+        case .location:
+            editableUserData.location = text
+        case .biography:
+            editableUserData.biography = text
+        }
+    }
+
+    enum ProfileField: Int {
+        case firstName
+        case lastName
+        case username
+        case location
+        case biography
+    }
+    enum EditEvent {
+        case save(User)
+        case cancel
+    }
 }
 
 

@@ -13,4 +13,8 @@ struct EditableUserData {
     var lastName: String?
     var location: String?
     var biography: String?
+
+    func isDataValid() -> Bool {
+        return true
+    }
 }

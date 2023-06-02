@@ -7,29 +7,32 @@
 
 import UIKit
 
-class DataRequestController<SearchItem: Codable> {
-    private var searchItems: [SearchItem] = []
-    private var currentPage: Int = 0
-    private var category: String
+class DataRequestController<Item: Codable> {
+    private var searchItems: [Item] = []
+    private var page: Int = 0
+    private var category: SearchEndpoint
     var searchWord: String? {
         didSet {
-            currentPage = 0
+            page = 0
         }
     }
 
-    init(category: String) {
+    let networkService: NetworkService = .init()
+    init(category: SearchEndpoint) {
         self.category = category
     }
 
     //actor
-    func loadNextPage() async throws -> [SearchItem] {
-        currentPage += 1
-        let urlRequest = URLRequest.Unsplash.search(category: category, word: searchWord!, page: currentPage)
+    func loadNextPage() async throws -> [Item] {
+        page += 1
+        let urlRequest: NetworkRequest<Item> = UnsplashRequests.searchItems(
+            type: category,
+            items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
 
-        let searchItems = try await SearchRequest<SearchItem>().sendRequest(with: urlRequest)
-        self.searchItems = searchItems
+        let items = try await networkService.performSearch(with: urlRequest)
+        self.searchItems = items
 
-        return searchItems
+        return items
     }
 }
 

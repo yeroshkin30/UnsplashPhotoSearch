@@ -16,9 +16,9 @@ class UserVC: UIViewController {
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
 
-    lazy var photosController: UserMediaController<Photo> = .init(MediaType.photos.rawValue, username: user.username)
-    lazy var likesController: UserMediaController<Photo> = .init(MediaType.likes.rawValue, username: user.username)
-    lazy var collectionsController: UserMediaController<Collection> = .init(MediaType.collections.rawValue, username: user.username)
+    lazy var photosController: UserMediaController<Photo> = .init(.photos(user.username))
+    lazy var likesController: UserMediaController<Photo> = .init(.likes(user.username))
+    lazy var collectionsController: UserMediaController<Collection> = .init(.collections(user.username))
     
     lazy var userPhotosVC: UserPhotosVC = .init(controller: photosController)
     lazy var userLikesVC: UserLikesVC = .init(controller: likesController)
@@ -123,13 +123,5 @@ private extension UserVC {
             make.height.equalTo(pagingScrollView.snp.height)
             make.width.equalTo(view.snp.width)
         }
-    }
-}
-
-extension UserVC {
-    enum MediaType: String {
-        case photos
-        case likes
-        case collections
     }
 }
