@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UnsplashTabBarController: UITabBarController {
+class AppFlowController: UITabBarController {
 
     let networkService: NetworkService = .init()
     let authController: AuthorizationController = .init()
@@ -33,7 +33,7 @@ class UnsplashTabBarController: UITabBarController {
     }
 }
 
-extension UnsplashTabBarController {
+extension AppFlowController {
     func showEditProfileVC(with user: User) {
         let editProfileVC = EditProfileVC(network: networkService, user: user)
         editProfileVC.onEvent = { [weak self] event in
