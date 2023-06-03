@@ -10,14 +10,13 @@ final class AuthorizationController: NSObject {
 
     private(set) var authState: AuthorizationState = .unauthorized {
         didSet {
-            onAuthChange?(authState)
+            onEvent?(authState)
         }
     }
 
-    var onAuthChange: ((AuthorizationState) -> Void)?
+    var onEvent: ((AuthorizationState) -> Void)?
 
     let networkService: NetworkService = .init()
-
 
     func checkAuthStatus() {
         Task {
@@ -34,13 +33,23 @@ final class AuthorizationController: NSObject {
         }
     }
 
+    // MARK: - Load and update User
     func loadAuthorizedUser() async throws  {
         let urlRequest = UnsplashRequests.userProfile()
         let user = try await networkService.perform(with: urlRequest)
         authState = .authorized(user)
     }
 
-    // MARK: - Authorization
+    func updateUserProfile(with data: EditableUserData) async throws {
+        let request = UnsplashRequests.editUserProfile(with: data)
+
+        let user = try await networkService.perform(with: request)
+        print(user)
+        onEvent?(.updated(user))
+    }
+
+
+// MARK: - Authorization
     func performAuthorization() async throws {
         let code: String = try await withUnsafeThrowingContinuation({ continuation in
             requestAuthorizationCode { code in
@@ -89,6 +98,7 @@ final class AuthorizationController: NSObject {
         UserDefaults.standard.set(true, forKey: UnsplashAPI.authorizationState)
     }
 
+    // MARK: - Logout
     func performLogOut() {
         cleanAuthorizationData()
         authState = .unauthorized
@@ -111,5 +121,6 @@ extension AuthorizationController {
         case authorized(User)
         case unauthorized
         case authorizing
+        case updated(User)
     }
 }

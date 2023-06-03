@@ -12,13 +12,16 @@ class EditProfileTVCell: UITableViewCell {
     static let identifier = "EditProfileTVCell"
 
     let textField: UITextField = .init()
-    var field: EditProfileVC.ProfileField?
-    var onEvent: ((EditProfileVC.ProfileField, String) -> Void)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textField)
         contentView.backgroundColor = .systemGray4
+        textField.addTarget(nil, action: #selector(EditProfileVC.textChangedInCell(sender:)), for: .editingChanged)
+    }
+
+    @objc func news() {
+        print("hellooo")
     }
 
     override func layoutSubviews() {
@@ -36,12 +39,5 @@ class EditProfileTVCell: UITableViewCell {
     func configuration(holder: String, text: String?) {
         textField.placeholder = holder
         textField.text = text
-    }
-}
-
-extension EditProfileTVCell: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let field, let text = textField.text else { return }
-        onEvent?(field, text)
     }
 }

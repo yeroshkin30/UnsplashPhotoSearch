@@ -14,23 +14,12 @@ enum NetworkErrors: Error {
 }
 
 struct NetworkService {
-    let unsplashURLSession: URLSession = {
+     private let unsplashURLSession: URLSession = {
         let sessionConfig = URLSessionConfiguration.default
         let session = URLSession(configuration: sessionConfig)
 
         return session
     }()
-
-    func performSearch<Response: Codable>(with request: NetworkRequest<Response>) async throws -> [Response] {
-        let (data, response) = try await unsplashURLSession.data(for: request.urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NetworkErrors.searchDataNotFound
-        }
-        let searchResults = try JSONDecoder().decode(SearchResults<Response>.self, from: data)
-
-        return searchResults.results
-    }
 
     func perform<Response: Codable>(with request: NetworkRequest<Response>) async throws -> Response {
         let (data, response) = try await unsplashURLSession.data(for: request.urlRequest)
@@ -38,7 +27,7 @@ struct NetworkService {
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkErrors.searchDataNotFound
         }
-        let searchResults = try request.decoder(data)
+        let searchResults = try request.parser(data)
 
         return searchResults
     }

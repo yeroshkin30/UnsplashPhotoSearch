@@ -21,20 +21,18 @@ class EditProfileVC: UIViewController {
         user.firstName,
         user.lastName,
         user.username,
-        user.biography,
-        user.location
+        user.location,
+        user.biography
     ]
-
-    var onEvent: ((EditEvent) -> Void)?
 
     var editableUserData: EditableUserData = .init()
 
 // MARK: - Initialiser
     private let user: User
-    private let networkService: NetworkService
+    private let authorizationController: AuthorizationController
 
-    init(network: NetworkService, user: User) {
-        self.networkService = network
+    init(auth controller: AuthorizationController, user: User) {
+        self.authorizationController = controller
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,21 +49,18 @@ class EditProfileVC: UIViewController {
 // MARK: - Events
     private func saveButtonTapped() {
         guard editableUserData.isDataValid() else { return }
-
-        let request = UnsplashRequests.editUserProfile(with: editableUserData)
         Task {
             do {
-                let user: User = try await networkService.perform(with: request)
-                onEvent?(.save(user))
+                try await authorizationController.updateUserProfile(with: editableUserData)
+                dismiss(animated: true)
             } catch {
                 print(error)
             }
         }
-
     }
 
     private func cancelButtonTapped() {
-        onEvent?(.cancel)
+        dismiss(animated: true)
     }
 }
 
@@ -124,11 +119,7 @@ extension EditProfileVC: UITableViewDataSource {
             holder: placeHolders[indexPath.row],
             text: userData[indexPath.row]
         )
-
-        cell.field = ProfileField(rawValue: indexPath.row)
-        cell.onEvent = { [weak self] field, text in
-            self?.textChangedInCell(in: field, text: text)
-        }
+        cell.textField.tag = indexPath.row
 
         return cell
     }
@@ -141,31 +132,21 @@ extension EditProfileVC: UITableViewDataSource {
 // MARK: - Delegate
 extension EditProfileVC: UITextFieldDelegate {
 
-    func textChangedInCell(in field: ProfileField, text: String) {
-        switch field {
-        case .firstName:
-            editableUserData.firstName = text
-        case .lastName:
-            editableUserData.lastName = text
-        case .username:
-            editableUserData.userName = text
-        case .location:
-            editableUserData.location = text
-        case .biography:
-            editableUserData.biography = text
+    @objc func textChangedInCell(sender: UITextField) {
+        switch sender.tag {
+        case 0:
+            editableUserData.firstName = sender.text
+        case 1:
+            editableUserData.lastName = sender.text
+        case 2:
+            editableUserData.userName = sender.text
+        case 3:
+            editableUserData.location = sender.text
+        case 4:
+            editableUserData.biography = sender.text
+        default:
+            return
         }
-    }
-
-    enum ProfileField: Int {
-        case firstName
-        case lastName
-        case username
-        case location
-        case biography
-    }
-    enum EditEvent {
-        case save(User)
-        case cancel
     }
 }
 

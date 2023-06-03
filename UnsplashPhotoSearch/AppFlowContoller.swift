@@ -23,9 +23,7 @@ class AppFlowController: UITabBarController {
         let searchVC = SearchVC()
 
         profileTabVC = ProfileTabVC(with: authController)
-        profileTabVC.onEvent = { [weak self] user in
-            self?.showEditProfileVC(with: user)
-        }
+        
         viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
 
         tabBar.backgroundColor = .Unsplash.dark3
@@ -34,15 +32,22 @@ class AppFlowController: UITabBarController {
 }
 
 extension AppFlowController {
-    func showEditProfileVC(with user: User) {
-        let editProfileVC = EditProfileVC(network: networkService, user: user)
-        editProfileVC.onEvent = { [weak self] event in
-            switch event {
-            case .save(let user):
-                print("Save")
-            case .cancel:
-                print("cancel")
-            }
-        }
-    }
+//    func showEditProfileVC(with user: User) {
+//        let editProfileVC = EditProfileVC(network: networkService, user: user)
+//        editProfileVC.onEvent = { [weak self] event in
+//            switch event {
+//            case .save(let user):
+//                print("Save")
+//            case .cancel:
+//                print("cancel")
+//            }
+//        }
+//        show(UINavigationController(rootViewController: editProfileVC), sender: nil)
+//    }
+//
+//    enum events {
+//        case photoSelect
+//        case collectionSelect
+//        case userSelected
+//    }
 }

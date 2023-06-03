@@ -53,6 +53,6 @@ enum SearchEndpoint {
         static let query = "query"
         static let page = "page"
         static let perPage = "per_page"
-        static let orderedBy = "orderedBy"
+        static let orderedBy = "order_by"
     }
 }

@@ -40,7 +40,9 @@ final class ProfileTabVC: UIViewController {
 
     // MARK: - UIMenuActions
     private func editButtonTapped() {
-        onEvent?(user)
+        let editProfileVC = EditProfileVC(auth: authorizationController, user: user)
+        
+        show(UINavigationController(rootViewController: editProfileVC), sender: nil)
     }
 
     private func logOutButtonTapped() {
@@ -94,15 +96,19 @@ private extension ProfileTabVC {
     }
 
     func setupEvents() {
-        authorizationController.onAuthChange = { [weak self] state in
+        authorizationController.onEvent = { [weak self] state in
             switch state {
             case .authorized(let user):
+                self?.user = user
                 self?.setupProfileVC(with: user)
             case .authorizing:
                 self?.logInButton.isHidden = true
                 self?.loadingView.isHidden = false
             case .unauthorized:
                 self?.userIsUnauthorized()
+            case .updated(let user):
+                self?.user = user
+                self?.profileVC.user = user
             }
         }
     }

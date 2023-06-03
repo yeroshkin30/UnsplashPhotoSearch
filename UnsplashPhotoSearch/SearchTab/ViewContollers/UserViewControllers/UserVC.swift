@@ -24,7 +24,15 @@ class UserVC: UIViewController {
     lazy var userLikesVC: UserLikesVC = .init(controller: likesController)
     lazy var userCollectionsVC: UserCollectionsVC = .init(controller: collectionsController)
 
-    let user: User
+    var user: User {
+        didSet {
+            userInfoView.configuration = .init(
+                name: user.name,
+                username: user.username,
+                imageURL: user.imageURL
+            )
+        }
+    }
 
     init(user: User) {
         self.user = user

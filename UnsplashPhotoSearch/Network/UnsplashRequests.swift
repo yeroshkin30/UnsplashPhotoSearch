@@ -8,15 +8,15 @@
 import Foundation
 
 enum UnsplashRequests {
-    static func searchItems<Response>(type: SearchEndpoint, items: SearchParam) -> NetworkRequest<Response> {
-        NetworkRequest(with: URLRequest(
+    static func searchItems<Response>(type: SearchEndpoint, items: SearchParam) -> NetworkRequest<[Response]> {
+        NetworkRequest<SearchResults<Response>>(decodable: URLRequest(
             path: type.path,
             queryItems: type.queryItems(items: items))
-        )
+        ).map(keyPath: \.results)
     }
     
     static func userMedia<Response>(type: UserEndpoint, items: UserParam) -> NetworkRequest<Response> {
-        NetworkRequest(with: URLRequest(
+        NetworkRequest(decodable: URLRequest(
             path: type.path,
             queryItems: type.queryItems(items: items),
             method: type.httpMethod)
@@ -24,7 +24,7 @@ enum UnsplashRequests {
     }
     
     static func collectionsPhoto(id collection: CollectionEndpoint, items: CollectionParam) -> NetworkRequest<[Photo]> {
-        NetworkRequest(with: URLRequest(
+        NetworkRequest(decodable: URLRequest(
             path: collection.path,
             queryItems: collection.queryItems(items: items),
             method: collection.httpMethod)
@@ -32,7 +32,7 @@ enum UnsplashRequests {
     }
     
     static func singlePhoto(id photo: PhotoEndpoint ) -> NetworkRequest<Photo> {
-        NetworkRequest(with: URLRequest(path: photo.path))
+        NetworkRequest(decodable: URLRequest(path: photo.path))
     }
     
     // MARK: - AuthorizationRequests
@@ -52,11 +52,11 @@ enum UnsplashRequests {
         var request = URLRequest(url: components.url!)
         request.httpMethod = HTTPMethod.POST.rawValue
 
-        return NetworkRequest(with: request)
+        return NetworkRequest(decodable: request)
     }
 
     static func userProfile() -> NetworkRequest<User> {
-        NetworkRequest(with: URLRequest(path: "/me"))
+        NetworkRequest(decodable: URLRequest(path: "/me"))
     }
 
     static func editUserProfile(with editableData: EditableUserData) -> NetworkRequest<User> {
@@ -69,7 +69,7 @@ enum UnsplashRequests {
         ].compactMapValues { $0 }
         let queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
 
-        return NetworkRequest(with: URLRequest(
+        return NetworkRequest(decodable: URLRequest(
             path: "/me",
             queryItems: queryItems,
             method: .PUT))

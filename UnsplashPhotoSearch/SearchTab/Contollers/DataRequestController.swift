@@ -25,11 +25,11 @@ class DataRequestController<Item: Codable> {
     //actor
     func loadNextPage() async throws -> [Item] {
         page += 1
-        let urlRequest: NetworkRequest<Item> = UnsplashRequests.searchItems(
+        let urlRequest: NetworkRequest<[Item]> = UnsplashRequests.searchItems(
             type: category,
             items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
 
-        let items = try await networkService.performSearch(with: urlRequest)
+        let items = try await networkService.perform(with: urlRequest)
         self.searchItems = items
 
         return items
