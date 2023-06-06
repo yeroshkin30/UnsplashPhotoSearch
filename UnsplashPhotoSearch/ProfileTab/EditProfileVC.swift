@@ -10,13 +10,8 @@ import SnapKit
 
 class EditProfileVC: UIViewController {
     private let tableView: UITableView = .init(frame: .zero, style: .insetGrouped)
-    private let placeHolders = [
-        "First Name",
-        "Last Name",
-        "Username",
-        "Location",
-        "Biography"
-    ]
+
+    var onEditEvent: ((EditEvent) -> Void)?
     lazy var userData = [
         user.firstName,
         user.lastName,
@@ -29,10 +24,8 @@ class EditProfileVC: UIViewController {
 
 // MARK: - Initialiser
     private let user: User
-    private let authorizationController: AuthorizationController
 
-    init(auth controller: AuthorizationController, user: User) {
-        self.authorizationController = controller
+    init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
@@ -49,18 +42,11 @@ class EditProfileVC: UIViewController {
 // MARK: - Events
     private func saveButtonTapped() {
         guard editableUserData.isDataValid() else { return }
-        Task {
-            do {
-                try await authorizationController.updateUserProfile(with: editableUserData)
-                dismiss(animated: true)
-            } catch {
-                print(error)
-            }
-        }
+        onEditEvent?(.save(editableUserData))
     }
 
     private func cancelButtonTapped() {
-        dismiss(animated: true)
+        onEditEvent?(.cancel)
     }
 }
 
@@ -115,11 +101,16 @@ extension EditProfileVC: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: EditProfileTVCell.identifier) as! EditProfileTVCell
+        let field = ProfileField(row: indexPath.row)
+
         cell.configuration(
-            holder: placeHolders[indexPath.row],
+            holder: field.placeholder,
             text: userData[indexPath.row]
         )
-        cell.textField.tag = indexPath.row
+
+        cell.onTextChange = { [weak self] text in
+            self?.handleText(text, in: field)
+        }
 
         return cell
     }
@@ -130,24 +121,55 @@ extension EditProfileVC: UITableViewDataSource {
 }
 
 // MARK: - Delegate
-extension EditProfileVC: UITextFieldDelegate {
-
-    @objc func textChangedInCell(sender: UITextField) {
-        switch sender.tag {
-        case 0:
-            editableUserData.firstName = sender.text
-        case 1:
-            editableUserData.lastName = sender.text
-        case 2:
-            editableUserData.userName = sender.text
-        case 3:
-            editableUserData.location = sender.text
-        case 4:
-            editableUserData.biography = sender.text
-        default:
-            return
+extension EditProfileVC {
+    func handleText(_ text: String, in field: ProfileField) {
+        switch field {
+        case .firstName:
+            editableUserData.firstName = text
+        case .lastName:
+            editableUserData.lastName = text
+        case .username:
+            editableUserData.userName = text
+        case .location:
+            editableUserData.location = text
+        case .biography:
+            editableUserData.biography = text
         }
     }
+
+    enum ProfileField: Int {
+        case firstName
+        case lastName
+        case username
+        case location
+        case biography
+
+        init(row: Int) {
+            self.init(rawValue: row)!
+        }
+
+        var placeholder: String {
+            switch self {
+            case .firstName:
+                return "First Name"
+            case .lastName:
+                return "Last Name"
+            case .username:
+                return "Username"
+            case .location:
+                return "Location"
+            case .biography:
+                return "Biography"
+            }
+        }
+    }
+    enum EditEvent {
+        case save(EditableUserData)
+        case cancel
+    }
 }
+
+
+
 
 

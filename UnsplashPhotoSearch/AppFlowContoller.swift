@@ -10,7 +10,7 @@ import UIKit
 class AppFlowController: UITabBarController {
 
     let networkService: NetworkService = .init()
-    let authController: AuthorizationController = .init()
+    lazy var authController: AuthorizationController = .init(networkService: networkService)
 
     var profileTabVC: ProfileTabVC!
 

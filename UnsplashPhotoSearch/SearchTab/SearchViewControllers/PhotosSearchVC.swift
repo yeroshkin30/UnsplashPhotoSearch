@@ -44,7 +44,7 @@ extension PhotosSearchVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let itemsLeft = searchData.count - indexPath.item
-        if itemsLeft < 30, isLoadingFlag == false {
+        if itemsLeft < 15, isLoadingFlag == false {
             loadNextPage(with: .item)
         }
     }

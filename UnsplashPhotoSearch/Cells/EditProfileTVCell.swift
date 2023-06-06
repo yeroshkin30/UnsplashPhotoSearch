@@ -12,16 +12,17 @@ class EditProfileTVCell: UITableViewCell {
     static let identifier = "EditProfileTVCell"
 
     let textField: UITextField = .init()
+    var onTextChange: ((String) -> Void)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textField)
         contentView.backgroundColor = .systemGray4
-        textField.addTarget(nil, action: #selector(EditProfileVC.textChangedInCell(sender:)), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
 
-    @objc func news() {
-        print("hellooo")
+    @objc func textDidChange(_ sender: UITextField) {
+        sender.text.map { onTextChange?($0) }
     }
 
     override func layoutSubviews() {

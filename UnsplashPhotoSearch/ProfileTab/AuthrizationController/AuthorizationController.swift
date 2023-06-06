@@ -7,45 +7,51 @@ import AuthenticationServices
 final class AuthorizationController: NSObject {
     private var webAuthSession: ASWebAuthenticationSession?
     private let isAuthorized = UserDefaults.standard.bool(forKey: UnsplashAPI.authorizationState)
-
+    private(set) var user: User!
     private(set) var authState: AuthorizationState = .unauthorized {
         didSet {
-            onEvent?(authState)
+            onStateChanged?(authState)
         }
     }
+    var onStateChanged: ((AuthorizationState) -> Void)?
 
-    var onEvent: ((AuthorizationState) -> Void)?
+    // MARK: - Initialiser
+    let networkService: NetworkService
 
-    let networkService: NetworkService = .init()
+    init(networkService: NetworkService) {
+        self.networkService = networkService
+    }
 
     func checkAuthStatus() {
         Task {
             do {
-                if isAuthorized {
-                    authState = .authorizing
-                    try await loadAuthorizedUser()
-                } else {
+                guard isAuthorized else {
                     authState = .unauthorized
+                    return
                 }
+
+                authState = .authorizing
+                try await loadAuthorizedUser()
+
             } catch {
                 print(error)
             }
         }
     }
 
-    // MARK: - Load and update User
+    // MARK: - Load or update User
     func loadAuthorizedUser() async throws  {
         let urlRequest = UnsplashRequests.userProfile()
-        let user = try await networkService.perform(with: urlRequest)
+        user = try await networkService.perform(with: urlRequest)
+
         authState = .authorized(user)
     }
 
-    func updateUserProfile(with data: EditableUserData) async throws {
-        let request = UnsplashRequests.editUserProfile(with: data)
+    func updateUserProfile(with info: EditableUserData) async throws {
+        let request = UnsplashRequests.editUserProfile(with: info)
 
-        let user = try await networkService.perform(with: request)
-        print(user)
-        onEvent?(.updated(user))
+        user = try await networkService.perform(with: request)
+        onStateChanged?(.update(user))
     }
 
 
@@ -121,6 +127,6 @@ extension AuthorizationController {
         case authorized(User)
         case unauthorized
         case authorizing
-        case updated(User)
+        case update(User)
     }
 }

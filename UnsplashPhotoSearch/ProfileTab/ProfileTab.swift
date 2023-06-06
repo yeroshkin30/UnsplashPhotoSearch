@@ -11,14 +11,11 @@ import SnapKit
 final class ProfileTabVC: UIViewController {
     private let logInButton: UIButton = .init(configuration: .filled())
     private let loadingView: UIActivityIndicatorView = .init()
-    private var authorizationController: AuthorizationController
+    private var authController: AuthorizationController
     private var profileVC: UserVC!
 
-    var onEvent: ((User) -> Void)?
-    private var user: User!
-
-    init(with authorizationController: AuthorizationController) {
-        self.authorizationController = authorizationController
+    init(with authController: AuthorizationController) {
+        self.authController = authController
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -29,24 +26,40 @@ final class ProfileTabVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        authorizationController.checkAuthStatus()
+        authController.checkAuthStatus()
     }
 
     private func logInButtonTapped() {
         Task {
-            try? await authorizationController.performAuthorization()
+            try? await authController.performAuthorization()
         }
     }
 
     // MARK: - UIMenuActions
     private func editButtonTapped() {
-        let editProfileVC = EditProfileVC(auth: authorizationController, user: user)
-        
+        let user = authController.user
+        let editProfileVC = EditProfileVC(user: user!)
+        editProfileVC.onEditEvent = { [weak self] event in
+            switch event {
+            case .save(let editInfo):
+                Task {
+                    do {
+                        try await self?.authController.updateUserProfile(with: editInfo)
+                        editProfileVC.dismiss(animated: true)
+                    } catch {
+                        print(error)
+                    }
+                }
+            case .cancel:
+                editProfileVC.dismiss(animated: true)
+            }
+        }
+
         show(UINavigationController(rootViewController: editProfileVC), sender: nil)
     }
 
     private func logOutButtonTapped() {
-        authorizationController.performLogOut()
+        authController.performLogOut()
     }
 
     // MARK: - Setup ProfileVC
@@ -96,18 +109,16 @@ private extension ProfileTabVC {
     }
 
     func setupEvents() {
-        authorizationController.onEvent = { [weak self] state in
+        authController.onStateChanged = { [weak self] state in
             switch state {
             case .authorized(let user):
-                self?.user = user
                 self?.setupProfileVC(with: user)
             case .authorizing:
                 self?.logInButton.isHidden = true
                 self?.loadingView.isHidden = false
             case .unauthorized:
                 self?.userIsUnauthorized()
-            case .updated(let user):
-                self?.user = user
+            case .update(let user):
                 self?.profileVC.user = user
             }
         }
@@ -117,6 +128,7 @@ private extension ProfileTabVC {
         logInButton.isHidden = false
         loadingView.isHidden = true
         removeChildVC(profileVC)
+        navigationItem.rightBarButtonItem = nil
     }
 
     func setupConstraints() {

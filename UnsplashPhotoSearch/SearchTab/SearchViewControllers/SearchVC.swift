@@ -14,6 +14,7 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     private let searchController: UISearchController = .init()
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
+    private let searchBar: UISearchBar = .init()
 
     private let photosController = DataRequestController<Photo>(category: .photo)
     private let collectionsController = DataRequestController<Collection>(category: .collection)
@@ -26,15 +27,14 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-//        changeSearchWord()
     }
 
     func changeSearchWord() {
-        let word = "panda"
+        let word = searchController.searchBar.text!
 
         photosSearchVC.searchWordDidChange(word)
-        collectionsSearchVC.searchWordDidChange(word)
-        usersSearchVC.searchWordDidChange(word)
+//        collectionsSearchVC.searchWordDidChange(word)
+//        usersSearchVC.searchWordDidChange(word)
     }
 
     // searchControllerDelegate
@@ -75,11 +75,14 @@ private extension SearchVC {
 
     func setupSearchController() {
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = true
         searchController.searchBar.delegate = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.automaticallyShowsSearchResultsController = true
-        searchController.searchBar.showsScopeBar = true
-
+//        searchControlleranda.obscuresBackgroundDuringPresentation = false
+//        searchController.automaticallyShowsSearchResultsController = true
+//        searchController.searchBar.showsScopeBar = true
+//        searchController.hidesNavigationBarDuringPresentation = false
+//        searchController.scopeBarActivation = .onSearchActivation
+        searchController.automaticallyShowsScopeBar = true
         searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
         searchController.searchBar.searchTextField.addAction(
             UIAction { _ in self.changeSearchWord() },

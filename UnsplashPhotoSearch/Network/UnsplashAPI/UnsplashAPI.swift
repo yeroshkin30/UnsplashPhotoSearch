@@ -19,8 +19,8 @@ enum UnsplashAPI {
     static let authorizationState = "authorizationState"
     static let accessTokenKey = "accessTokenKey"
     static let callbackUrlScheme = "unsplashPhoto://authorization"
-    static let clientID = CliendId.second.rawValue
-    static let clientSecret = CliendId.secondSecret.rawValue
+    static let clientID = CliendId.first.rawValue
+    static let clientSecret = CliendId.firstSectet.rawValue
 
     static var logInURL: URL {
         var urlComponents = URLComponents()
