@@ -75,19 +75,10 @@ private extension SearchVC {
 
     func setupSearchController() {
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
+        navigationItem.hidesSearchBarWhenScrolling = false
         searchController.searchBar.delegate = self
-//        searchControlleranda.obscuresBackgroundDuringPresentation = false
-//        searchController.automaticallyShowsSearchResultsController = true
-//        searchController.searchBar.showsScopeBar = true
-//        searchController.hidesNavigationBarDuringPresentation = false
-//        searchController.scopeBarActivation = .onSearchActivation
-        searchController.automaticallyShowsScopeBar = true
         searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
-        searchController.searchBar.searchTextField.addAction(
-            UIAction { _ in self.changeSearchWord() },
-            for: .valueChanged
-        )
+
         searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
     }
 
