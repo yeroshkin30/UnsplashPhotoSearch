@@ -74,6 +74,33 @@ enum UnsplashRequests {
             queryItems: queryItems,
             method: .PUT))
     }
+
+    static func likePhoto(photo: Photo, like: Bool) -> NetworkRequest<Photo> {
+        let method = like ? HTTPMethod.DELETE : HTTPMethod.POST
+
+        let request = NetworkRequest(
+            with: URLRequest(
+                path: "/photos/\(photo.id)/like",
+                method: method),
+            parser: { data in
+                guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                      let jsonPhoto = json["photo"] as? [String: Any],
+                      let isLiked = jsonPhoto["liked_by_user"] as? Bool,
+                      let likes = jsonPhoto["likes"] as? Int else {
+                    throw DecodeError.unsuccessfulDecode
+                }
+
+                var newPhoto = photo
+                newPhoto.isLiked = isLiked
+                newPhoto.likes = likes
+
+                return newPhoto
+            })
+
+        return request
+    }
+
+   
 }
 
 

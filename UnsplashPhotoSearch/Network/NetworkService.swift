@@ -24,7 +24,8 @@ struct NetworkService {
     func perform<Response: Codable>(with request: NetworkRequest<Response>) async throws -> Response {
         let (data, response) = try await unsplashURLSession.data(for: request.urlRequest)
 
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse,
+              (httpResponse.statusCode == 200) || httpResponse.statusCode == 201 else {
             throw NetworkErrors.searchDataNotFound
         }
         let searchResults = try request.parser(data)

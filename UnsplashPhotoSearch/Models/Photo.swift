@@ -28,7 +28,8 @@ struct Photo: Codable {
     let width: Int
     let photoURL: PhotoURLS
     let user: User?
-    let likes: Int?
+    var likes: Int?
+    var isLiked: Bool
     let location: Location?
 
     enum CodingKeys: String, CodingKey {
@@ -41,6 +42,7 @@ struct Photo: Codable {
         case photoURL = "urls"
         case user
         case likes
+        case isLiked = "liked_by_user"
         case location
     }
     

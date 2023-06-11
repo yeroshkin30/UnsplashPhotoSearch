@@ -34,9 +34,23 @@ class PhotoVC: UIViewController {
     func update() {
         photoView.configuration = .init(photo: self.photo)
 
+
         Task {
             let urlRequest: NetworkRequest<Photo> = UnsplashRequests.singlePhoto(id: .photo(photo.id))
             self.photo = try await networkService.perform(with: urlRequest)
+        }
+    }
+
+    func photoIsLiked(_ isLiked: Bool) {
+
+        Task {
+            do {
+                let request = UnsplashRequests.likePhoto(photo: photo, like: isLiked)
+                photo = try await networkService.perform(with: request)
+                photoView.configuration = .init(photo: self.photo)
+            } catch {
+                print(error)
+            }
         }
     }
 }
@@ -55,9 +69,14 @@ private extension PhotoVC {
             make.left.right.bottom.top.equalToSuperview()
         }
 
-        photoView.infoButtonEvent = {
-            let detailVC = PhotoDetailVC(location: self.photo.location)
-            self.present(UINavigationController(rootViewController: detailVC), animated: true)
+        photoView.onButtonEvent = { [weak self] button in
+            switch button {
+            case .like(let like):
+                self?.photoIsLiked(like)
+            case .info:
+                let detailVC = PhotoDetailVC(location: self?.photo.location)
+                self?.present(UINavigationController(rootViewController: detailVC), animated: true)
+            }
         }
     }
 }

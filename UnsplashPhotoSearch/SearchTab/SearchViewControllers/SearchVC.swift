@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-final class SearchVC: UIViewController, UISearchBarDelegate {
+final class SearchVC: UIViewController {
     private let searchController: UISearchController = .init()
     private let pagingScrollView: UIScrollView = .init()
     private let stackView: UIStackView = .init()
@@ -24,13 +24,16 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsController)
     lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersController)
 
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        changeSearchWord()
     }
 
     func changeSearchWord() {
-        let word = searchController.searchBar.text!
+        let word = "panda"
 
         photosSearchVC.searchWordDidChange(word)
 //        collectionsSearchVC.searchWordDidChange(word)
@@ -38,8 +41,25 @@ final class SearchVC: UIViewController, UISearchBarDelegate {
     }
 
     // searchControllerDelegate
+}
+
+extension SearchVC: UISearchBarDelegate {
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.searchTextField.endEditing(true)
         changeSearchWord()
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        UIView.animate(withDuration: 0.3){
+            searchBar.setShowsCancelButton(false, animated: false)
+            searchBar.searchTextField.endEditing(true)
+        }
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
@@ -75,11 +95,26 @@ private extension SearchVC {
 
     func setupSearchController() {
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.hidesSearchBarWhenScrolling = true
+        navigationItem.largeTitleDisplayMode = .never
         searchController.searchBar.delegate = self
         searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
 
         searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
+
+
+//        searchBar.delegate = self
+//        searchBar.searchBarStyle = .minimal
+//        searchBar.showsScopeBar = true
+//        searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
+//        searchBar.searchTextField.addAction(
+//            UIAction { _ in self.changeSearchWord() },
+//            for: .valueChanged
+//        )
+//        searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
+//
+//        navigationItem.titleView = searchBar
+//
     }
 
     func setupChildVC() {
