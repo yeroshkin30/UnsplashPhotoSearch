@@ -11,6 +11,8 @@ class DataRequestController<Item: Codable> {
     private var searchItems: [Item] = []
     private var page: Int = 0
     private var category: SearchEndpoint
+
+    var photos: [Photo] = []
     var searchWord: String? {
         didSet {
             page = 0
@@ -33,6 +35,18 @@ class DataRequestController<Item: Codable> {
         self.searchItems = items
 
         return items
+    }
+
+    func fetchPhotos() async throws -> [Photo] {
+        page += 1
+        let urlRequest: NetworkRequest<[Photo]> = UnsplashRequests.searchItems(
+            type: .photo,
+            items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
+
+        let items = try await networkService.perform(with: urlRequest)
+        photos.append(contentsOf: items)
+
+        return photos
     }
 }
 

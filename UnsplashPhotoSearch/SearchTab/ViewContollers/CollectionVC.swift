@@ -52,7 +52,7 @@ class CollectionVC: UIViewController {
         view.addSubview(collectionView)
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(ImageInfoCell.self, forCellWithReuseIdentifier: ImageInfoCell.identifier)
+        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
         collectionView.frame = view.bounds
     }
 }
@@ -64,7 +64,7 @@ extension CollectionVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier, for: indexPath) as! PhotoCell
         let item = photos[indexPath.item]
         cell.configure(with: item)
 

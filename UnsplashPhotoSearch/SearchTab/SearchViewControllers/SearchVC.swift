@@ -10,21 +10,21 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-final class SearchVC: UIViewController {
+final class MainSearchVC: UIViewController {
+
     private let searchController: UISearchController = .init()
-    private let pagingScrollView: UIScrollView = .init()
-    private let stackView: UIStackView = .init()
     private let searchBar: UISearchBar = .init()
+    private let containerView: UIView = .init()
 
-    private let photosController = DataRequestController<Photo>(category: .photo)
-    private let collectionsController = DataRequestController<Collection>(category: .collection)
-    private let usersController = DataRequestController<User>(category: .user)
+    private let dataFetchController: DataFetchController = .shared
 
-    lazy private var photosSearchVC: PhotosSearchVC = .init(controller: photosController )
-    lazy private var collectionsSearchVC: CollectionsSearchVC = .init(controller: collectionsController)
-    lazy private var usersSearchVC: UsersSearchVC = .init(controller: usersController)
+    private let photosSearchVC: PhotosSearchVC = .init()
+    private let collectionsSearchVC: CollectionsSearchVC = .init()
+    private let usersSearchVC: UsersSearchVC = .init()
 
+    var currentChild: UIViewController!
 
+// MARK: - LifeCycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,15 +35,133 @@ final class SearchVC: UIViewController {
     func changeSearchWord() {
         let word = "panda"
 
-        photosSearchVC.searchWordDidChange(word)
-//        collectionsSearchVC.searchWordDidChange(word)
-//        usersSearchVC.searchWordDidChange(word)
+        dataFetchController.searchWord = word
+        getData()
     }
 
-    // searchControllerDelegate
+    func getData() {
+        let index = searchController.searchBar.selectedScopeButtonIndex
+
+        Task {
+            switch SearchCategory(rawValue: index) {
+            case .photos:
+                photosSearchVC.photos = await dataFetchController.fetchPhotos()
+                
+            case .collections:
+                collectionsSearchVC.collections = await dataFetchController.fetchCollections()
+                
+            case .users:
+                usersSearchVC.users = await dataFetchController.fetchUsers()
+                
+            default:
+                return
+            }
+        }
+    }
 }
 
-extension SearchVC: UISearchBarDelegate {
+// MARK: - Private methods
+private extension MainSearchVC {
+    func setup() {
+        tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+
+        view.backgroundColor = .white
+
+        setupSearchController()
+        setupChildVC()
+        setupConstraints()
+    }
+
+    func setupSearchController() {
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.largeTitleDisplayMode = .never
+        searchController.searchBar.delegate = self
+        searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
+        searchController.searchBar.showsScopeBar = true
+        searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
+    }
+
+    func setupChildVC() {
+        addChild(controller: photosSearchVC, rootView: containerView)
+        currentChild = photosSearchVC
+
+        photosSearchVC.onEvent = { [weak self] event in
+            guard let self else { return }
+
+            switch event {
+            case .loadNextPage:
+                Task {
+                    self.photosSearchVC.photos = await self.dataFetchController.fetchPhotos()
+                }
+            case .showPhoto(let photo):
+                print(photo.id)
+            }
+        }
+
+        collectionsSearchVC.onEvent = { [weak self] event in
+            guard let self else { return }
+
+            switch event {
+            case .loadNextPage:
+                Task {
+                    self.collectionsSearchVC.collections = await self.dataFetchController.fetchCollections()
+                }
+            case .showCollection(let collection):
+                print(collection.id)
+            }
+        }
+
+        usersSearchVC.onEvent = { [weak self] event in
+            guard let self else { return }
+
+            switch event {
+            case .loadNextPage:
+                Task {
+                    self.usersSearchVC.users = await self.dataFetchController.fetchUsers()
+                }
+            case .showUser(let user):
+                print(user.id)
+            }
+        }
+    }
+
+    func setupConstraints() {
+        containerView.layout(in: view) {
+            $0.top == view.safeAreaLayoutGuide.topAnchor
+            $0.leading == view.safeAreaLayoutGuide.leadingAnchor
+            $0.trailing == view.safeAreaLayoutGuide.trailingAnchor
+            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor
+        }
+    }
+}
+
+extension MainSearchVC: UISearchControllerDelegate {
+
+}
+
+
+extension MainSearchVC: UISearchBarDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        changeSearchWord()
+        switch selectedScope {
+        case 0:
+            childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
+            currentChild = photosSearchVC
+
+        case 1:
+            childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
+            currentChild = collectionsSearchVC
+            
+        case 2:
+            childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
+            currentChild = usersSearchVC
+
+        default:
+            return
+        }
+    }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(false, animated: true)
@@ -61,89 +179,45 @@ extension SearchVC: UISearchBarDelegate {
             searchBar.searchTextField.endEditing(true)
         }
     }
+}
 
-    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        changeSearchWord()
-        let width = view.frame.width
-
-        switch selectedScope {
-        case 0:
-            pagingScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-        case 1:
-            pagingScrollView.setContentOffset(CGPoint(x: width, y: 0), animated: true)
-        case 2:
-            pagingScrollView.setContentOffset(CGPoint(x: width * 2, y: 0), animated: true)
-        default:
-            return
-        }
+extension MainSearchVC {
+    enum SearchCategory: Int {
+        case photos
+        case collections
+        case users
     }
 }
 
-//UISetup
-private extension SearchVC {
-    func setup() {
-        tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-
-        view.backgroundColor = .white
-        view.addSubview(pagingScrollView)
-
-        setupSearchController()
-        setupChildVC()
-        scrollViewSetup()
-        setupConstraints()
-    }
-
-    func setupSearchController() {
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
-        navigationItem.largeTitleDisplayMode = .never
-        searchController.searchBar.delegate = self
-        searchController.searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
-
-        searchController.searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
 
 
-//        searchBar.delegate = self
-//        searchBar.searchBarStyle = .minimal
-//        searchBar.showsScopeBar = true
-//        searchBar.scopeButtonTitles = ["Photos","Collections", "Users"]
-//        searchBar.searchTextField.addAction(
-//            UIAction { _ in self.changeSearchWord() },
-//            for: .valueChanged
-//        )
-//        searchBar.layer.backgroundColor = .init(gray: 10, alpha: 1)
-//
-//        navigationItem.titleView = searchBar
-//
-    }
 
-    func setupChildVC() {
-        addChildVC(photosSearchVC, superView: stackView)
-        addChildVC(collectionsSearchVC, superView: stackView)
-        addChildVC(usersSearchVC, superView: stackView)
-    }
 
-    func scrollViewSetup() {
-        pagingScrollView.addSubview(stackView)
-        pagingScrollView.isPagingEnabled = true
-        pagingScrollView.isScrollEnabled = false
+extension UIViewController {
+    func childrenFullScreenAnimatedTransition(
+        from presented: UIViewController,
+        to presenting: UIViewController,
+        completion: ((Bool) -> Void)? = nil
+    ) {
+        assert(presented.parent == self, "Presented view controller should be a child of self", file: #file, line: #line)
 
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-    }
+        presented.willMove(toParent: nil)
+        addChild(presenting)
+        presenting.view.alpha = 0
+        presenting.view.layout(in: view)
+        presenting.didMove(toParent: self)
 
-    func setupConstraints() {
-        pagingScrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
+        UIView.animate(
+            withDuration: 0.5,
+            animations: {
+                presenting.view.alpha = 1
+            }, completion: { isFinished in
 
-        stackView.snp.makeConstraints { make in
-            make.top.leading.trailing.bottom.equalTo(pagingScrollView.contentLayoutGuide)
-        }
+                presented.view.removeFromSuperview()
+                presented.removeFromParent()
 
-        photosSearchVC.view.snp.makeConstraints { make in
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.height)
-            make.width.equalTo(view.safeAreaLayoutGuide.snp.width)
-        }
+                completion?(isFinished)
+            }
+        )
     }
 }

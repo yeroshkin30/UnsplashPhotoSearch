@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 class EditProfileTVCell: UITableViewCell {
-    static let identifier = "EditProfileTVCell"
 
     let textField: UITextField = .init()
     var onTextChange: ((String) -> Void)?

@@ -30,7 +30,7 @@ extension UserCollectionsVC: UICollectionViewDataSource, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageInfoCell.identifier, for: indexPath) as! ImageInfoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier, for: indexPath) as! PhotoCell
         let item = mediaData[indexPath.section].photoPreviews[indexPath.item]
 
         cell.configure(with: item)
@@ -43,8 +43,8 @@ extension UserCollectionsVC: UICollectionViewDataSource, UICollectionViewDelegat
             ofKind: "header", withReuseIdentifier: "header",
             for: indexPath) as! CollectionsHeaderView
         let item = mediaData[indexPath.section]
-        header.nameLabel.text = item.title
-        header.photoCountLabel.text = "\(item.totalPhotos) photos"
+//        header.nameLabel.text = item.title
+//        header.photoCountLabel.text = "\(item.totalPhotos) photos"
 
         return header
     }

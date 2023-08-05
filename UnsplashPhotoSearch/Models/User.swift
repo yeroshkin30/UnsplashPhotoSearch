@@ -8,6 +8,7 @@
 import Foundation
 
 struct User: Codable {
+    let identifier: UUID = .init()
     let id: String
     let username: String
     let name: String
@@ -55,5 +56,15 @@ struct User: Codable {
 
         let profileImageURLs = try values.nestedContainer(keyedBy: ProfileImageKey.self, forKey: .profileImageURL)
         imageURL = try profileImageURLs.decode(URL.self, forKey: .large)
+    }
+}
+
+extension User: Hashable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
 }

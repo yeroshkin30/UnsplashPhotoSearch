@@ -8,10 +8,8 @@
 import UIKit
 import Kingfisher
 
-class ImageInfoCell: UICollectionViewCell {
-    static let identifier = "Cell"
+class PhotoCell: UICollectionViewCell {
     let imageView: UIImageView = .init()
-    
     let descriptionLabel: UILabel = .init()
     let urlLabel: UILabel = .init()
 

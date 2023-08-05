@@ -20,6 +20,7 @@ extension UIImage {
 }
 
 struct Photo: Codable {
+    let identifier: UUID = .init()
     let id: String
     let description: String?
     let alternativeDescription: String?
@@ -45,7 +46,16 @@ struct Photo: Codable {
         case isLiked = "liked_by_user"
         case location
     }
-    
+}
+
+extension Photo: Hashable {
+    static func == (lhs: Photo, rhs: Photo) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
 }
 
 struct PhotoURLS: Codable {

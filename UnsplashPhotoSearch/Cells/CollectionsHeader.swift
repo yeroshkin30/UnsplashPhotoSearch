@@ -7,56 +7,53 @@
 
 import UIKit
 
-class CollectionsHeaderView: UICollectionReusableView {
-        
-    let nameLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .label
-        label.font = UIFont.boldSystemFont(ofSize: 15)
-
-        return label
-    }()
-
-    let photoCountLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .label
-        label.font = UIFont.systemFont(ofSize: 11)
-
-        return label
-    }()
-
-    let stackView: UIStackView = .init()
+final class CollectionsHeaderView: UICollectionReusableView {
+    
+    private let nameLabel: UILabel = .init()
+    private let numberOfPhotosLabel: UILabel = .init()
+    private let stackView: UIStackView = .init()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setupView(){
-        addSubview(stackView)
+    func configure(name: String, number: String) {
+        nameLabel.text = name
+        numberOfPhotosLabel.text = number
+    }
+}
 
+private extension CollectionsHeaderView {
+    func setupView(){
         stackView.addArrangedSubview(nameLabel)
-        stackView.addArrangedSubview(photoCountLabel)
+        stackView.addArrangedSubview(numberOfPhotosLabel)
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .leading
 
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8)
-        ])
+        stackView.layout(in: self) {
+            $0.top == topAnchor + 12
+            $0.leading == leadingAnchor + 8
+        }
+
+        setupLabels()
     }
-    
+
+    func setupLabels() {
+        nameLabel.textColor = .label
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 15)
+
+        numberOfPhotosLabel.textColor = .label
+        numberOfPhotosLabel.font = UIFont.systemFont(ofSize: 11)
+    }
 }
 
-class SectionBackgroundColor: UICollectionReusableView {
-    let view: UIView = .init()
+final class SectionBackgroundColor: UICollectionReusableView {
+    private let view: UIView = .init()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,17 +66,8 @@ class SectionBackgroundColor: UICollectionReusableView {
     }
 
     private func setupView() {
-        addSubview(view)
         view.backgroundColor = .systemGray2.withAlphaComponent(0.15)
         view.layer.cornerRadius = 5
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-            view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
-            view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
-            view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5)
-        ])
+        view.layout(in: self, allEdges: 5)
     }
-
 }

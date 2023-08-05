@@ -9,6 +9,7 @@ import Foundation
 
 
 struct Collection: Codable {
+    let identifier: UUID = .init()
     let id: String
     let title: String
     let totalPhotos: Int
@@ -40,17 +41,13 @@ struct Collection: Codable {
     }
 }
 
-extension Collection: Hashable, Comparable {
+extension Collection: Hashable {
     static func == (lhs: Collection, rhs: Collection) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    static func < (lhs: Collection, rhs: Collection) -> Bool {
-        lhs.id > rhs.id
+        lhs.identifier == rhs.identifier
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(identifier)
     }
 }
 

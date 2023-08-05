@@ -20,7 +20,15 @@ extension UIViewController {
         }
         viewController.didMove(toParent: self)
     }
-    
+
+    func addChild (controller: UIViewController, rootView: UIView) {
+        addChild(controller)
+        rootView.addSubview(controller.view)
+        controller.didMove(toParent: self)
+        controller.view.layout(in: rootView)
+
+    }
+
     func removeChildVC(_ viewController: UIViewController?) {
         guard let viewController = viewController else { return }
         

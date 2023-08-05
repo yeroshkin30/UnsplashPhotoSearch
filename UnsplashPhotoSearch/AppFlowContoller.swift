@@ -20,7 +20,7 @@ class AppFlowController: UITabBarController {
     }
 
     func setup() {
-        let searchVC = SearchVC()
+        let searchVC = MainSearchVC()
 
         profileTabVC = ProfileTabVC(with: authController)
         
