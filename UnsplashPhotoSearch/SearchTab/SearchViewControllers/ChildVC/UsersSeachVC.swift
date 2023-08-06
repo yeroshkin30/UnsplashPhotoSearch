@@ -16,10 +16,25 @@ class UsersSearchVC: UIViewController {
     }
 
     var onEvent: ((Event) -> Void)?
-    var users: [User] = []
+    var users: [User] = [] {
+        didSet {
+            changeSnapshot()
+        }
+    }
 
     private let mainView: ChildSearchView = .init(type: .users)
     private var dataSource: UICollectionViewDiffableDataSource<Int, User>!
+
+    // MARK: - Inits
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        createDataSource()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - LifeCycle
 
@@ -39,8 +54,6 @@ class UsersSearchVC: UIViewController {
 private extension UsersSearchVC {
 
     func setup() {
-        createDataSource()
-
         mainView.collectionView.dataSource = dataSource
         mainView.collectionView.delegate = self
     }

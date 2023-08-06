@@ -12,6 +12,15 @@ import SnapKit
 
 final class MainSearchVC: UIViewController {
 
+    enum Event {
+        case showPhoto(Photo)
+        case showCollection(Collection)
+        case showUser(User)
+    }
+
+    var onEvent: ((Event) -> Void)?
+
+    // MARK: - Private properties
     private let searchController: UISearchController = .init()
     private let searchBar: UISearchBar = .init()
     private let containerView: UIView = .init()
@@ -22,7 +31,7 @@ final class MainSearchVC: UIViewController {
     private let collectionsSearchVC: CollectionsSearchVC = .init()
     private let usersSearchVC: UsersSearchVC = .init()
 
-    var currentChild: UIViewController!
+    private var currentChild: UIViewController!
 
 // MARK: - LifeCycle
 
@@ -34,25 +43,26 @@ final class MainSearchVC: UIViewController {
 
     func changeSearchWord() {
         let word = "panda"
-
+        
         dataFetchController.searchWord = word
-        getData()
+        Task {
+            photosSearchVC.photos = await dataFetchController.fetchPhotos()
+            collectionsSearchVC.collections = await dataFetchController.fetchCollections()
+            usersSearchVC.users = await dataFetchController.fetchUsers()
+        }
     }
 
-    func getData() {
+    func fetchItems() {
         let index = searchController.searchBar.selectedScopeButtonIndex
 
         Task {
             switch SearchCategory(rawValue: index) {
             case .photos:
                 photosSearchVC.photos = await dataFetchController.fetchPhotos()
-                
             case .collections:
                 collectionsSearchVC.collections = await dataFetchController.fetchCollections()
-                
             case .users:
                 usersSearchVC.users = await dataFetchController.fetchUsers()
-                
             default:
                 return
             }
@@ -63,8 +73,6 @@ final class MainSearchVC: UIViewController {
 // MARK: - Private methods
 private extension MainSearchVC {
     func setup() {
-        tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-
         view.backgroundColor = .white
 
         setupSearchController()
@@ -87,41 +95,29 @@ private extension MainSearchVC {
         currentChild = photosSearchVC
 
         photosSearchVC.onEvent = { [weak self] event in
-            guard let self else { return }
-
             switch event {
             case .loadNextPage:
-                Task {
-                    self.photosSearchVC.photos = await self.dataFetchController.fetchPhotos()
-                }
+                self?.fetchItems()
             case .showPhoto(let photo):
-                print(photo.id)
+                self?.onEvent?(.showPhoto(photo))
             }
         }
 
         collectionsSearchVC.onEvent = { [weak self] event in
-            guard let self else { return }
-
             switch event {
             case .loadNextPage:
-                Task {
-                    self.collectionsSearchVC.collections = await self.dataFetchController.fetchCollections()
-                }
+                self?.fetchItems()
             case .showCollection(let collection):
-                print(collection.id)
+                self?.onEvent?(.showCollection(collection))
             }
         }
 
         usersSearchVC.onEvent = { [weak self] event in
-            guard let self else { return }
-
             switch event {
             case .loadNextPage:
-                Task {
-                    self.usersSearchVC.users = await self.dataFetchController.fetchUsers()
-                }
+                self?.fetchItems()
             case .showUser(let user):
-                print(user.id)
+                self?.onEvent?(.showUser(user))
             }
         }
     }
@@ -136,26 +132,22 @@ private extension MainSearchVC {
     }
 }
 
-extension MainSearchVC: UISearchControllerDelegate {
-
-}
 
 
 extension MainSearchVC: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        changeSearchWord()
-        switch selectedScope {
-        case 0:
-            childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
+        switch SearchCategory(rawValue: selectedScope) {
+        case .photos:
+            childrenFullScreenAnimatedTransition(from: currentChild, to: photosSearchVC)
             currentChild = photosSearchVC
 
-        case 1:
+        case .collections:
             childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
             currentChild = collectionsSearchVC
-            
-        case 2:
-            childrenFullScreenAnimatedTransition(from: currentChild, to: collectionsSearchVC)
+
+        case .users:
+            childrenFullScreenAnimatedTransition(from: currentChild, to: usersSearchVC)
             currentChild = usersSearchVC
 
         default:
@@ -186,38 +178,5 @@ extension MainSearchVC {
         case photos
         case collections
         case users
-    }
-}
-
-
-
-
-
-extension UIViewController {
-    func childrenFullScreenAnimatedTransition(
-        from presented: UIViewController,
-        to presenting: UIViewController,
-        completion: ((Bool) -> Void)? = nil
-    ) {
-        assert(presented.parent == self, "Presented view controller should be a child of self", file: #file, line: #line)
-
-        presented.willMove(toParent: nil)
-        addChild(presenting)
-        presenting.view.alpha = 0
-        presenting.view.layout(in: view)
-        presenting.didMove(toParent: self)
-
-        UIView.animate(
-            withDuration: 0.5,
-            animations: {
-                presenting.view.alpha = 1
-            }, completion: { isFinished in
-
-                presented.view.removeFromSuperview()
-                presented.removeFromParent()
-
-                completion?(isFinished)
-            }
-        )
     }
 }

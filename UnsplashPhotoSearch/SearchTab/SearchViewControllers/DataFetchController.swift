@@ -12,7 +12,10 @@ class DataFetchController {
     static let shared = DataFetchController()
     private init() { }
 
-    private var page: Int = 0
+    private var photoPage = 0
+    private var collectionPage = 0
+    private var userPage = 0
+
 
     var photos: [Photo] = []
     var collections: [Collection] = []
@@ -20,18 +23,24 @@ class DataFetchController {
 
     var searchWord: String? {
         didSet {
-            page = 0
+            photoPage = 0
+            collectionPage = 0
+            userPage = 0
+
+            photos = []
+            collections = []
+            users = []
         }
     }
 
     let networkService: NetworkService = .init()
 
     func fetchPhotos() async -> [Photo] {
-        page += 1
+        photoPage += 1
 
         let urlRequest: NetworkRequest<[Photo]> = UnsplashRequests.searchItems(
             type: .photo,
-            items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
+            items: .init(searchWord: searchWord!, page: photoPage, orderedBy: .latest))
         do {
             let items = try await networkService.perform(with: urlRequest)
             photos.append(contentsOf: items)
@@ -43,11 +52,11 @@ class DataFetchController {
     }
 
     func fetchCollections() async -> [Collection] {
-        page += 1
+        collectionPage += 1
 
         let urlRequest: NetworkRequest<[Collection]> = UnsplashRequests.searchItems(
             type: .collection,
-            items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
+            items: .init(searchWord: searchWord!, page: collectionPage, orderedBy: .latest))
         do {
             let items = try await networkService.perform(with: urlRequest)
             collections.append(contentsOf: items)
@@ -60,11 +69,11 @@ class DataFetchController {
 
 
     func fetchUsers() async -> [User] {
-        page += 1
+        userPage += 1
 
         let urlRequest: NetworkRequest<[User]> = UnsplashRequests.searchItems(
             type: .user,
-            items: .init(searchWord: searchWord!, page: page, orderedBy: .latest))
+            items: .init(searchWord: searchWord!, page: userPage, orderedBy: .latest))
         do {
             let items = try await networkService.perform(with: urlRequest)
             users.append(contentsOf: items)

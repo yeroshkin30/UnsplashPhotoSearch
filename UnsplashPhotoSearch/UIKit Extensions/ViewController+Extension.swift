@@ -8,18 +8,6 @@
 import UIKit
 
 extension UIViewController {
-    func addChildVC(_ viewController: UIViewController, superView: UIView? = nil) {
-        addChild(viewController)
-
-        if let superView = superView as? UIStackView {
-            superView.addArrangedSubview(viewController.view)
-        } else if let superView {
-            superView.addSubview(viewController.view)
-        } else {
-            view.addSubview(viewController.view)
-        }
-        viewController.didMove(toParent: self)
-    }
 
     func addChild (controller: UIViewController, rootView: UIView) {
         addChild(controller)
@@ -38,3 +26,33 @@ extension UIViewController {
 
     }
 }
+
+extension UIViewController {
+    func childrenFullScreenAnimatedTransition(
+        from presented: UIViewController,
+        to presenting: UIViewController,
+        completion: ((Bool) -> Void)? = nil
+    ) {
+        assert(presented.parent == self, "Presented view controller should be a child of self", file: #file, line: #line)
+
+        presented.willMove(toParent: nil)
+        addChild(presenting)
+        presenting.view.alpha = 0
+        presenting.view.layout(in: view)
+        presenting.didMove(toParent: self)
+
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                presenting.view.alpha = 1
+            }, completion: { isFinished in
+
+                presented.view.removeFromSuperview()
+                presented.removeFromParent()
+
+                completion?(isFinished)
+            }
+        )
+    }
+}
+

@@ -24,6 +24,17 @@ class PhotosSearchVC: UIViewController {
     private let mainView: ChildSearchView = .init(type: .photos)
     private var dataSource: UICollectionViewDiffableDataSource<Int, Photo>!
 
+    // MARK: - Inits
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        createDataSource()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -42,8 +53,6 @@ class PhotosSearchVC: UIViewController {
 private extension PhotosSearchVC {
     
     func setup() {
-        createDataSource()
-
         mainView.collectionView.dataSource = dataSource
         mainView.collectionView.delegate = self
     }

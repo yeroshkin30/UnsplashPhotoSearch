@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PhotoScrollView: UIScrollView {
+final class PhotoScrollView: UIScrollView {
     private let imageView: UIImageView = .init()
     private let tapGesture: UITapGestureRecognizer = .init()
     private var viewIsSet = false

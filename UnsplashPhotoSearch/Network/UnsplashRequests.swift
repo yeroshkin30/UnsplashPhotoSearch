@@ -31,7 +31,7 @@ enum UnsplashRequests {
         )
     }
     
-    static func singlePhoto(id photo: PhotoEndpoint ) -> NetworkRequest<Photo> {
+    static func singlePhoto(id photo: PhotoEndpoint) -> NetworkRequest<Photo> {
         NetworkRequest(decodable: URLRequest(path: photo.path))
     }
     
@@ -76,7 +76,7 @@ enum UnsplashRequests {
     }
 
     static func likePhoto(photo: Photo, like: Bool) -> NetworkRequest<Photo> {
-        let method = like ? HTTPMethod.DELETE : HTTPMethod.POST
+        let method = like ? HTTPMethod.POST : HTTPMethod.DELETE
 
         let request = NetworkRequest(
             with: URLRequest(

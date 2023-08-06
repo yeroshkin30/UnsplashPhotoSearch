@@ -14,23 +14,12 @@ enum CliendId: String {
     case secondSecret = "uvOCVzZwN_9wtP2_67HlO_ncrARCQKJ6z0A8tvOF6QA"
 }
 
-
-
-
-
-
-
-
-
-
-
-
 enum UnsplashAPI {
     static let authorizationState = "authorizationState"
     static let accessTokenKey = "accessTokenKey"
     static let callbackUrlScheme = "unsplashPhoto://authorization"
-    static let clientID = CliendId.first.rawValue
-    static let clientSecret = CliendId.firstSectet.rawValue
+    static let clientID = CliendId.second.rawValue
+    static let clientSecret = CliendId.secondSecret.rawValue
 
     static var logInURL: URL {
         var urlComponents = URLComponents()

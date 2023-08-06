@@ -7,12 +7,14 @@
 
 import UIKit
 
-class AppFlowController: UITabBarController {
+final class MainFlowController: UITabBarController {
 
     let networkService: NetworkService = .init()
     lazy var authController: AuthorizationController = .init(networkService: networkService)
 
     var profileTabVC: ProfileTabVC!
+
+    private let searchTabFlowController: SearchTabFlowController = .init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,18 +22,17 @@ class AppFlowController: UITabBarController {
     }
 
     func setup() {
-        let searchVC = MainSearchVC()
 
         profileTabVC = ProfileTabVC(with: authController)
         
-        viewControllers = [UINavigationController(rootViewController: searchVC), UINavigationController(rootViewController: profileTabVC)]
+        viewControllers = [searchTabFlowController, UINavigationController(rootViewController: profileTabVC)]
 
         tabBar.backgroundColor = .Unsplash.dark3
         tabBar.unselectedItemTintColor = .white
     }
 }
 
-extension AppFlowController {
+extension MainFlowController {
 //    func showEditProfileVC(with user: User) {
 //        let editProfileVC = EditProfileVC(network: networkService, user: user)
 //        editProfileVC.onEvent = { [weak self] event in

@@ -15,12 +15,28 @@ class CollectionsSearchVC: UIViewController {
     }
 
     var onEvent: ((Event) -> Void)?
-
+    var collections: [Collection] = [] {
+        didSet {
+            changeSnapshot()
+        }
+    }
+    
     // MARK: - Private properties
 
     private let mainView: ChildSearchView = .init(type: .collections)
     private var dataSource: UICollectionViewDiffableDataSource<Collection, PreviewPhoto>!
-    var collections: [Collection] = []
+
+
+    // MARK: - Inits
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        createDataSource()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - LifeCycle
 
@@ -39,7 +55,6 @@ class CollectionsSearchVC: UIViewController {
 
 private extension CollectionsSearchVC {
     func setup() {
-        createDataSource()
         mainView.collectionView.dataSource = dataSource
         mainView.collectionView.delegate = self
     }
@@ -88,7 +103,7 @@ private extension CollectionsSearchVC {
 extension CollectionsSearchVC:  UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        onEvent?(.showCollection(collections[indexPath.item]))
+        onEvent?(.showCollection(collections[indexPath.section]))
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

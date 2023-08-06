@@ -66,7 +66,7 @@ final class ProfileTabVC: UIViewController {
     private func setupProfileVC(with user: User) {
         profileVC = .init(user: user)
 
-        addChildVC(profileVC)
+//        addChildVC(profileVC)
         profileVC.view.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
