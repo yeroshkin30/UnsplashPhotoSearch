@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionsSearchVC: UIViewController {
+class CollectionsVC: UIViewController {
 
     enum Event {
         case loadNextPage
@@ -53,7 +53,7 @@ class CollectionsSearchVC: UIViewController {
 
 // MARK: - Private methods
 
-private extension CollectionsSearchVC {
+private extension CollectionsVC {
     func setup() {
         mainView.collectionView.dataSource = dataSource
         mainView.collectionView.delegate = self
@@ -62,7 +62,7 @@ private extension CollectionsSearchVC {
 
 // MARK: - DataSource
 
-private extension CollectionsSearchVC {
+private extension CollectionsVC {
     func createDataSource() {
         let dataSource = UICollectionViewDiffableDataSource<Collection, PreviewPhoto>(
             collectionView: mainView.collectionView,
@@ -100,7 +100,7 @@ private extension CollectionsSearchVC {
 
 // MARK: - CollectionView Delegate
 
-extension CollectionsSearchVC:  UICollectionViewDelegate {
+extension CollectionsVC:  UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         onEvent?(.showCollection(collections[indexPath.section]))

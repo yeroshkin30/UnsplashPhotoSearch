@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PhotosSearchVC: UIViewController {
+class PhotosVC: UIViewController {
 
     enum Event {
         case loadNextPage
@@ -50,7 +50,7 @@ class PhotosSearchVC: UIViewController {
 
 // MARK: - Private methods
 
-private extension PhotosSearchVC {
+private extension PhotosVC {
     
     func setup() {
         mainView.collectionView.dataSource = dataSource
@@ -60,7 +60,7 @@ private extension PhotosSearchVC {
 
 // MARK: - DataSource
 
-private extension PhotosSearchVC {
+private extension PhotosVC {
     func createDataSource() {
         let dataSource = UICollectionViewDiffableDataSource<Int, Photo>(
             collectionView: mainView.collectionView,
@@ -86,8 +86,7 @@ private extension PhotosSearchVC {
 
 // MARK: - CollectionView Delegate
 
-extension PhotosSearchVC: UICollectionViewDelegate {
-
+extension PhotosVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         onEvent?(.showPhoto(photos[indexPath.item]))
     }

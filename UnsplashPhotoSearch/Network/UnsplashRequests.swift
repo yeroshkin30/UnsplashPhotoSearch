@@ -7,6 +7,22 @@
 
 import Foundation
 
+extension Array where Element == URLQueryItem {
+    static func createItems(page: Int, searchWord: String? = nil) -> [URLQueryItem] {
+        var query = [
+            "page": "\(page)",
+            "per_page": "30"
+        ]
+        if let searchWord {
+            query["query"] = searchWord
+        }
+
+        let queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+
+        return queryItems
+    }
+}
+
 enum UnsplashRequests {
     static func searchItems<Response>(type: SearchEndpoint, items: SearchParam) -> NetworkRequest<[Response]> {
         NetworkRequest<SearchResults<Response>>(decodable: URLRequest(
@@ -22,6 +38,13 @@ enum UnsplashRequests {
             method: type.httpMethod)
         )
     }
+    static func usersMedia<Response>(userId: String, type: String, page: Int) -> NetworkRequest<Response> {
+        NetworkRequest(decodable: URLRequest(
+            path: "/users/\(userId)/\(type)",
+            queryItems: .createItems(page: page),
+            method: .GET)
+        )
+    }
     
     static func collectionsPhoto(id collection: CollectionEndpoint, items: CollectionParam) -> NetworkRequest<[Photo]> {
         NetworkRequest(decodable: URLRequest(
@@ -31,8 +54,8 @@ enum UnsplashRequests {
         )
     }
     
-    static func singlePhoto(id photo: PhotoEndpoint) -> NetworkRequest<Photo> {
-        NetworkRequest(decodable: URLRequest(path: photo.path))
+    static func singlePhoto(with id: String) -> NetworkRequest<Photo> {
+        NetworkRequest(decodable: URLRequest(path: "/photos/\(id)"))
     }
     
     // MARK: - AuthorizationRequests

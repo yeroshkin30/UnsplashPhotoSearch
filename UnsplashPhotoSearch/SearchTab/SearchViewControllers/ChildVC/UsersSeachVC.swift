@@ -8,7 +8,7 @@
 import UIKit
 
 
-class UsersSearchVC: UIViewController {
+class UsersVC: UIViewController {
 
     enum Event {
         case loadNextPage
@@ -51,7 +51,7 @@ class UsersSearchVC: UIViewController {
 
 // MARK: - Private methods
 
-private extension UsersSearchVC {
+private extension UsersVC {
 
     func setup() {
         mainView.collectionView.dataSource = dataSource
@@ -61,7 +61,7 @@ private extension UsersSearchVC {
 
 // MARK: - DataSource
 
-private extension UsersSearchVC {
+private extension UsersVC {
     func createDataSource() {
         let dataSource = UICollectionViewDiffableDataSource<Int, User>(
             collectionView: mainView.collectionView,
@@ -87,7 +87,7 @@ private extension UsersSearchVC {
 
 // MARK: - CollectionView Delegate
 
-extension UsersSearchVC: UICollectionViewDelegate {
+extension UsersVC: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         onEvent?(.showUser(users[indexPath.item]))

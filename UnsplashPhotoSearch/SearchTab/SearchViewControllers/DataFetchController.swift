@@ -12,14 +12,15 @@ class DataFetchController {
     static let shared = DataFetchController()
     private init() { }
 
+    private let networkService: NetworkService = .init()
+
     private var photoPage = 0
     private var collectionPage = 0
     private var userPage = 0
 
-
-    var photos: [Photo] = []
-    var collections: [Collection] = []
-    var users: [User] = []
+    private (set) var photos: [Photo] = []
+    private (set) var collections: [Collection] = []
+    private (set) var users: [User] = []
 
     var searchWord: String? {
         didSet {
@@ -33,53 +34,40 @@ class DataFetchController {
         }
     }
 
-    let networkService: NetworkService = .init()
 
-    func fetchPhotos() async -> [Photo] {
+    func fetchPhotos() async throws -> [Photo] {
         photoPage += 1
 
         let urlRequest: NetworkRequest<[Photo]> = UnsplashRequests.searchItems(
             type: .photo,
             items: .init(searchWord: searchWord!, page: photoPage, orderedBy: .latest))
-        do {
-            let items = try await networkService.perform(with: urlRequest)
-            photos.append(contentsOf: items)
-        } catch {
-            print(error)
-        }
+        let items = try await networkService.perform(with: urlRequest)
+        photos.append(contentsOf: items)
 
         return photos
     }
 
-    func fetchCollections() async -> [Collection] {
+    func fetchCollections() async throws -> [Collection] {
         collectionPage += 1
 
         let urlRequest: NetworkRequest<[Collection]> = UnsplashRequests.searchItems(
             type: .collection,
             items: .init(searchWord: searchWord!, page: collectionPage, orderedBy: .latest))
-        do {
-            let items = try await networkService.perform(with: urlRequest)
-            collections.append(contentsOf: items)
-        } catch {
-            print(error)
-        }
+        let items = try await networkService.perform(with: urlRequest)
+        collections.append(contentsOf: items)
 
         return collections
     }
 
 
-    func fetchUsers() async -> [User] {
+    func fetchUsers() async throws -> [User] {
         userPage += 1
 
         let urlRequest: NetworkRequest<[User]> = UnsplashRequests.searchItems(
             type: .user,
             items: .init(searchWord: searchWord!, page: userPage, orderedBy: .latest))
-        do {
-            let items = try await networkService.perform(with: urlRequest)
-            users.append(contentsOf: items)
-        } catch {
-            print(error)
-        }
+        let items = try await networkService.perform(with: urlRequest)
+        users.append(contentsOf: items)
 
         return users
     }

@@ -27,9 +27,9 @@ final class MainSearchVC: UIViewController {
 
     private let dataFetchController: DataFetchController = .shared
 
-    private let photosSearchVC: PhotosSearchVC = .init()
-    private let collectionsSearchVC: CollectionsSearchVC = .init()
-    private let usersSearchVC: UsersSearchVC = .init()
+    private let photosSearchVC: PhotosVC = .init()
+    private let collectionsSearchVC: CollectionsVC = .init()
+    private let usersSearchVC: UsersVC = .init()
 
     private var currentChild: UIViewController!
 
@@ -45,10 +45,14 @@ final class MainSearchVC: UIViewController {
         let word = "panda"
         
         dataFetchController.searchWord = word
-        Task {
-            photosSearchVC.photos = await dataFetchController.fetchPhotos()
-            collectionsSearchVC.collections = await dataFetchController.fetchCollections()
-            usersSearchVC.users = await dataFetchController.fetchUsers()
+        Task { /// if One fails, all fail
+            do {
+                photosSearchVC.photos = try await dataFetchController.fetchPhotos()
+                collectionsSearchVC.collections = try await dataFetchController.fetchCollections()
+                usersSearchVC.users = try await dataFetchController.fetchUsers()
+            } catch {
+                print(error)
+            }
         }
     }
 
@@ -56,15 +60,19 @@ final class MainSearchVC: UIViewController {
         let index = searchController.searchBar.selectedScopeButtonIndex
 
         Task {
-            switch SearchCategory(rawValue: index) {
-            case .photos:
-                photosSearchVC.photos = await dataFetchController.fetchPhotos()
-            case .collections:
-                collectionsSearchVC.collections = await dataFetchController.fetchCollections()
-            case .users:
-                usersSearchVC.users = await dataFetchController.fetchUsers()
-            default:
-                return
+            do {
+                switch SearchCategory(rawValue: index) {
+                case .photos:
+                    photosSearchVC.photos = try await dataFetchController.fetchPhotos()
+                case .collections:
+                    collectionsSearchVC.collections = try await dataFetchController.fetchCollections()
+                case .users:
+                    usersSearchVC.users = try await dataFetchController.fetchUsers()
+                default:
+                    return
+                }
+            } catch {
+                print(error)
             }
         }
     }

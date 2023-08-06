@@ -13,7 +13,7 @@ final class CollectionVC: UIViewController {
 
     // MARK: - Private properties
 
-    private let photosChildVC: PhotosSearchVC = .init()
+    private let photosChildVC: PhotosVC = .init()
     private var photos: [Photo] = []
     private let collectionActor: CollectionActor = .init()
 

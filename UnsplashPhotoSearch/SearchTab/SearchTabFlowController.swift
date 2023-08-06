@@ -61,7 +61,8 @@ private extension SearchTabFlowController {
         controller.onEvent = { [weak self] event in
             self?.handlePhotoVCEvent(with: event)
         }
-        
+
+        controller.hidesBottomBarWhenPushed = true
         show(controller, sender: self)
     }
 
@@ -71,6 +72,7 @@ private extension SearchTabFlowController {
             self?.showPhotoVC(with: photo)
         }
 
+        controller.hidesBottomBarWhenPushed = true
         show(controller, sender: self)
     }
 
@@ -79,7 +81,9 @@ private extension SearchTabFlowController {
     }
 
     func showPhotoDetailVC(with photo: Photo) {
-
+        let controller = PhotoDetailVC(location: photo.location)
+        controller.onDismissEvent = { controller.dismiss(animated: true) }
+        present(controller, animated: true)
     }
 }
 

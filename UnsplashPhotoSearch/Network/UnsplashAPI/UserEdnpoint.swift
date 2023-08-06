@@ -36,7 +36,7 @@ enum UserEndpoint {
         case .collections(let id):
             return "/users/\(id)/collections"
         }
-    }
+    }\
 
     var httpMethod: HTTPMethod { .GET }
 

@@ -2,8 +2,10 @@
 //  PreviewPhoto.swift
 //  UnsplashPhotoSearch
 //
-//  Created by Apple on 03.04.2023.
+//  Created by Oleg  on 06.08.2023.
 //
+
+import Foundation
 
 import Foundation
 
